@@ -1,0 +1,68 @@
+server:
+    port: 8080
+    context-path: /manage
+
+#logging:
+#  level:
+#    tk.mybatis: DEBUG
+#    org:
+#      springframework:
+#        boot: info
+#  file: /apps/service/logs/dev-java-manage/${spring.application.name}.log
+
+spring:
+  application:
+    name: ik
+  datasource:
+    name: test
+    url: jdbc:mysql://172.19.216.49:3306/manage
+    username: keycloak
+    password: admin
+    # 使用druid数据源
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.jdbc.Driver
+    filters: stat
+    maxActive: 500
+    initialSize: 1
+    maxWait: 60000
+    minIdle: 1
+    timeBetweenEvictionRunsMillis: 60000
+    minEvictableIdleTimeMillis: 300000
+    validationQuery: select 1
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    poolPreparedStatements: true
+    maxOpenPreparedStatements: 20
+  mvc:
+    view:
+      prefix: /webapp/templates/
+      suffix: .ftl
+    static-path-pattern: /webapp/static/** #default path pattern is /** , map to /static（or /public ，/resources，/META-INF/resources）
+  resources:
+    static-locations: classpath:/webapp/static/
+  freemarker:
+    template-loader-path: classpath:/webapp/templates/
+    cache: false
+    request-context-attribute: request
+  http:
+    encoding:
+      charset: UTF-8 # Charset of HTTP requests and responses. Added to the "Content-Type" header if not set explicitly.
+      enabled: true # Enable http encoding support.
+      force: true
+  #redis config
+#  redis:
+#    pool:
+#      max-active: 100
+#      max-idle: 20
+#      max-wait: 1000
+#    host: 192.168.28.128
+#    port: 6379
+#    password: 123456
+
+cas:
+#  casServerLoginUrl: http://localhost:8188/cas/login
+#  serverName: http://localhost:8088/ik
+#  casServerUrlPrefix: http://localhost:8188/cas
+  excludedUrl: (/.*\.js$)|(/.*\.png$)|(/.*\.jpg$)|(/.*\.gif$)|(/.*\.ico$)|(/.*\.css$)|
+

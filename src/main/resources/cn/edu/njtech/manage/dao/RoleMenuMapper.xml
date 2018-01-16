@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.edu.njtech.manage.dao.RoleMenuMapper">
+  <resultMap id="BaseResultMap" type="cn.edu.njtech.manage.domain.RoleMenu">
+    <result column="role_id" jdbcType="INTEGER" property="roleId" />
+    <result column="menu_id" jdbcType="INTEGER" property="menuId" />
+    <result column="operation" jdbcType="INTEGER" property="operation" />
+  </resultMap>
+  <insert id="insert" parameterType="cn.edu.njtech.manage.domain.RoleMenu">
+    insert into t_role_menu (role_id, menu_id, operation
+      )
+    values (#{roleId,jdbcType=INTEGER}, #{menuId,jdbcType=INTEGER}, #{operation,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="cn.edu.njtech.manage.domain.RoleMenu">
+    insert into t_role_menu
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="roleId != null">
+        role_id,
+      </if>
+      <if test="menuId != null">
+        menu_id,
+      </if>
+      <if test="operation != null">
+        operation,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="roleId != null">
+        #{roleId,jdbcType=INTEGER},
+      </if>
+      <if test="menuId != null">
+        #{menuId,jdbcType=INTEGER},
+      </if>
+      <if test="operation != null">
+        #{operation,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+</mapper>
