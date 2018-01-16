@@ -5,7 +5,7 @@ import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 /**
- * mvc路径与url对应配置
+ * mvc璺緞涓巙rl瀵瑰簲閰嶇疆
  */
 @Configuration
 public class MvcConfig extends WebMvcConfigurerAdapter {
