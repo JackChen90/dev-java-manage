@@ -4,68 +4,79 @@
  * @description home js
  */
 $(function () {
-    // database.databaseHeader();
-    // database.databaseFooter();
-    // database.databaseInit();
     menu.init();
 });
 
 
 var menu = {
+    //默认第一页
+    pageNum: 1,
+    //默认每页20条
+    pageSize: 20,
     url: "menu/queryData",
     init: function () {
-        ajaxPostJson(url,true,'admin',createMenu);
+        ajaxPostJson(menu.url, false, {type: 1}, createMenu);
     }
 };
 
 
-function createMenu(data) {
-    if (!data || !data.data) {
+function addChildren(children, level) {
+    if (!children) {
         return;
     }
-    var menuData = data.data;
-
+    var navClass;
+    switch (level) {
+        case 2:
+            navClass = "nav-second-level";
+            break;
+        case 3:
+            navClass = "nav-third-level";
+            break;
+    }
+    var result = "<ul class=\"nav " + navClass + " collapse\"  aria-expanded=\"false\">";
+    for (var i = 0; i < children.length; i++) {
+        if (children[i].children) {
+            result += "<li><a href=\"#\">" + children[i].menuName + "<span class=\"fa arrow\"></span></a>";
+            result += addChildren(children[i].children, level + 1);
+        } else {
+            result += "<li><a class=\"J_menuItem\" href=\"" + children[i].url
+                + "?menuId=" + children[i].id
+                + "&type=" + 1
+                + "&pageNum=" + menu.pageNum
+                + "&pageSize=" + menu.pageSize + "\">" + children[i].menuName + "</a>";
+        }
+        result += "</li>";
+    }
+    result += "</ul>";
+    return result;
 }
 
-/**
- * 封装ajax post方法
- * @param url 请求地址
- * @param async 异步与否标识
- * @param paramdata 请求数据
- * @param callback 回调函数
- */
-function ajaxPostJson(url, async, paramdata, callback) {
-    if (async == null || async == "undefined" || async == "null") {
-        async = true;
+function createMenu(data) {
+    if (!data) {
+        return;
     }
-    $.ajax({
-        type: 'POST',
-        cache: false,
-        url: url,
-        data: paramdata,
-        async: false,
-        beforeSend: function () {
-        },
-        success: function (result) {
-            if (result != null && result.flag) {
-                var data = result.message;
-                if (callback) {
-                    callback(data);
-                }
-            } else {
-                // parent.layer.confirm('资料库正在维护中，请耐心等待开放~', {
-                //     icon: 6,
-                //     btn: ['确定'] //按钮
-                // }, function () {
-                //     gotoHome();
-                // });
-            }
-        },
-        error: function (html) {
-            // parent.layer.msg('资料库正在维护中，请耐心等待开放~', {time: 2000, icon: 6});
-            // setTimeout(gotoHome, 2000);
-        },
-        complete: function () {
+    var menuData = data;
+    for (var i = 0; i < menuData.length; i++) {
+        var item = menuData[i];
+        var result = "<li>";
+        if (item.children) {
+            result += "<a href=\"#\">";
+        } else {
+            result += "<a class=\"J_menuItem\" href=\"" + item.url + "?"
+                + "menuId=" + item.id
+                + "&type=" + 1
+                + "&pageNum=" + menu.pageNum
+                + "&pageSize=" + menu.pageSize
+                + "\">";
         }
-    });
+        result += "<i class=\"fa fa-columns\"></i>" +
+            " <span class=\"nav-label\">" + item.menuName + "</span>";
+        result += " <span class=\"fa " + (item.children ? 'arrow' : '') + "\"></span></a>";
+
+        if (item.children) {
+            result += addChildren(item.children, 2);
+        }
+        result += "</li>";
+        $("#side-menu").append(result);
+    }
 }

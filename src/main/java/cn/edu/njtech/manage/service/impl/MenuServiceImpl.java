@@ -1,15 +1,21 @@
 package cn.edu.njtech.manage.service.impl;
 
+import cn.edu.njtech.manage.constant.RedisConstant;
 import cn.edu.njtech.manage.dao.MenuInfoMapper;
 import cn.edu.njtech.manage.domain.MenuInfo;
 import cn.edu.njtech.manage.dto.MenuInfoDTO;
 import cn.edu.njtech.manage.service.IMenuService;
+import cn.edu.njtech.manage.util.GsonUtil;
+import cn.edu.njtech.manage.util.RedisUtil;
+import com.google.gson.reflect.TypeToken;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Type;
 import java.util.*;
 
 /**
@@ -27,16 +33,50 @@ public class MenuServiceImpl implements IMenuService {
 	private static final Integer ROOT = -1;
 
 	@Autowired
+	private RedisUtil redisUtil;
+
+	@Autowired
 	@Qualifier("M_MenuInfo")
 	private MenuInfoMapper menuInfoMapper;
 
 	@Override
 	public List<MenuInfoDTO> queryMenuList(List<Integer> roleIds, Integer type) {
 		logger.info("=== queryMenuList roleIds:{}, type:{} ===", roleIds, type);
-		List<MenuInfoDTO> menus = menuInfoMapper.queryMenuList(roleIds, type);
+		//获取角色对应的菜单列表
+		List<MenuInfoDTO> menus = this.queryMenus(roleIds, type);
 		//调整结果顺序，调整数据为树形结构（子节点在父节点下面）
-		sortMenus(menus);
+		menus = sortMenus(menus);
 		logger.info("=== queryMenuList success ===, menus size:{}", menus == null ? null : menus.size());
+		return menus;
+	}
+
+	@Override
+	public List<MenuInfoDTO> queryMenus(List<Integer> roleIds, Integer type) {
+		logger.info("=== queryMenus roleIds:{}, type:{} ===", roleIds, type);
+
+		List<MenuInfoDTO> menus = new ArrayList<>();
+		List<MenuInfoDTO> items;
+		//MenuInfoDTO list type
+		Type typeToken = new TypeToken<ArrayList<MenuInfoDTO>>() {
+		}.getType();
+		for (Integer roleId :
+				roleIds) {
+			//redis中获取角色对应menu列表
+			String menusStr = redisUtil.hGet(RedisConstant.KEY_ROLE_MENU, roleId + "_" + type + RedisConstant.ROLE_SUFFIX);
+			if (StringUtils.isEmpty(menusStr)) {
+				//redis中不存在，取db
+				items = menuInfoMapper.queryMenuByRoleId(roleId, type);
+				//入redis
+				String menuItem = new GsonUtil().getDateSafeGson().toJson(items, typeToken);
+				redisUtil.hSet(RedisConstant.KEY_ROLE_MENU, roleId + "_" + type + RedisConstant.ROLE_SUFFIX, menuItem);
+			} else {
+				//反序列化
+				items = new GsonUtil().getDateSafeGson().fromJson(menusStr, typeToken);
+			}
+			menus.addAll(items);
+		}
+		logger.info("=== queryMenus success ===, menus size:{}", menus == null ? null : menus.size());
+
 		return menus;
 	}
 
@@ -45,7 +85,7 @@ public class MenuServiceImpl implements IMenuService {
 	 *
 	 * @param menus db查询结果
 	 */
-	private void sortMenus(List<MenuInfoDTO> menus) {
+	private List<MenuInfoDTO> sortMenus(List<MenuInfoDTO> menus) {
 		//调整后的结果列表
 		List<MenuInfoDTO> result = new ArrayList<>();
 		//关系列表（记录父子关系）
@@ -63,13 +103,14 @@ public class MenuServiceImpl implements IMenuService {
 				addChildren(result, dto, relation);
 			}
 		}
+		return result;
 	}
 
 	/**
 	 * 将节点插入某个父节点的children列表
 	 *
-	 * @param result 结果列表
-	 * @param dto 当前节点
+	 * @param result   结果列表
+	 * @param dto      当前节点
 	 * @param relation 关系列表（记录父子关系）
 	 */
 	private void addChildren(List<MenuInfoDTO> result, MenuInfoDTO dto,
@@ -87,10 +128,10 @@ public class MenuServiceImpl implements IMenuService {
 	/**
 	 * 递归添加menuTree子节点
 	 *
-	 * @param list children列表
-	 * @param child 子节点
+	 * @param list    children列表
+	 * @param child   子节点
 	 * @param parents 父节点列表
-	 * @param index 当前父节点位置
+	 * @param index   当前父节点位置
 	 */
 	private void add(List<MenuInfoDTO> list, MenuInfoDTO child, List<Integer> parents,
 					 int index) {
@@ -116,6 +157,13 @@ public class MenuServiceImpl implements IMenuService {
 		}
 	}
 
+	/**
+	 * 获取父节点列表
+	 *
+	 * @param relation 关系列表（记录父子关系）
+	 * @param dto      当前节点
+	 * @return
+	 */
 	private List<Integer> getParents(Map<Integer, Integer> relation, MenuInfoDTO dto) {
 		List<Integer> parents = new ArrayList<>();
 		//逐级增加父节点

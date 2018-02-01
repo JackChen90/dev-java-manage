@@ -11,7 +11,7 @@ public class UserInfo {
 
     private String userName;
 
-    private Integer phone;
+    private Long phone;
 
     private String description;
 
@@ -57,11 +57,11 @@ public class UserInfo {
         this.userName = userName == null ? null : userName.trim();
     }
 
-    public Integer getPhone() {
+    public Long getPhone() {
         return phone;
     }
 
-    public void setPhone(Integer phone) {
+    public void setPhone(Long phone) {
         this.phone = phone;
     }
 

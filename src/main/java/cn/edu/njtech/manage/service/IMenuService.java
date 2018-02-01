@@ -13,11 +13,20 @@ import java.util.List;
 public interface IMenuService {
 
 	/**
-	 * ���ݽ�ɫids��ȡmenu�б�
+	 * 根据角色ids，菜单类型 获取menu列表
 	 *
-	 * @param roleIds ��ɫids
-	 * @param type    �˵�����
+	 * @param roleIds 角色ids
+	 * @param type    菜单类型
 	 * @return
 	 */
 	List<MenuInfoDTO> queryMenuList(List<Integer> roleIds, Integer type);
+
+	/**
+	 * 根据角色ids，菜单类型 获取menu列表
+	 *
+	 * @param roleIds 角色ids
+	 * @param type    菜单类型
+	 * @return
+	 */
+	List<MenuInfoDTO> queryMenus(List<Integer> roleIds, Integer type);
 }

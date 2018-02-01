@@ -1,3 +1,6 @@
+build:
+  version: ${build.version}
+
 server:
     port: 8080
     context-path: /manage
@@ -11,8 +14,12 @@ server:
 #  file: /apps/service/logs/dev-java-manage/${spring.application.name}.log
 
 spring:
+  profiles:
+    active: dev
   application:
     name: ik
+  thymeleaf:
+    check-template-location: false
   datasource:
     name: test
     url: jdbc:mysql://172.19.216.49:3306/manage
@@ -34,6 +41,18 @@ spring:
     testOnReturn: false
     poolPreparedStatements: true
     maxOpenPreparedStatements: 20
+  redis:
+    pool:
+      # 连接池最大连接数（使用负值表示没有限制）
+      max-active: 16
+      # 连接池最大阻塞等待时间（使用负值表示没有限制）
+      max-wait: -1
+      # 连接池中的最大空闲连接
+      max-idle: 16
+      # 连接池中的最小空闲连接
+      min-idle: 0
+    # 连接超时时间（毫秒）
+    timeout: 6000
   mvc:
     view:
       prefix: /webapp/templates/
@@ -43,22 +62,15 @@ spring:
     static-locations: classpath:/webapp/static/
   freemarker:
     template-loader-path: classpath:/webapp/templates/
-    cache: false
-    request-context-attribute: request
+    suffix: .ftl
+    requestContextAttribute: request
+#    cache: false
+#    request-context-attribute: request
   http:
     encoding:
       charset: UTF-8 # Charset of HTTP requests and responses. Added to the "Content-Type" header if not set explicitly.
       enabled: true # Enable http encoding support.
       force: true
-  #redis config
-#  redis:
-#    pool:
-#      max-active: 100
-#      max-idle: 20
-#      max-wait: 1000
-#    host: 192.168.28.128
-#    port: 6379
-#    password: 123456
 
 cas:
 #  casServerLoginUrl: http://localhost:8188/cas/login
@@ -66,3 +78,14 @@ cas:
 #  casServerUrlPrefix: http://localhost:8188/cas
   excludedUrl: (/.*\.js$)|(/.*\.png$)|(/.*\.jpg$)|(/.*\.gif$)|(/.*\.ico$)|(/.*\.css$)|
 
+#spring.redis.database=0 # Database index used by the connection factory.
+#spring.redis.host=localhost # Redis server host.
+#spring.redis.password= # Login password of the redis server.
+#spring.redis.pool.max-active=8 # Max number of connections that can be allocated by the pool at a given time. Use a negative value for no limit.
+#spring.redis.pool.max-idle=8 # Max number of "idle" connections in the pool. Use a negative value to indicate an unlimited number of idle connections.
+#spring.redis.pool.max-wait=-1 # Maximum amount of time (in milliseconds) a connection allocation should block before throwing an exception when the pool is exhausted. Use a negative value to block indefinitely.
+#spring.redis.pool.min-idle=0 # Target for the minimum number of idle connections to maintain in the pool. This setting only has an effect if it is positive.
+#spring.redis.port=6379 # Redis server port.
+#spring.redis.sentinel.master= # Name of Redis server.
+#spring.redis.sentinel.nodes= # Comma-separated list of host:port pairs.
+#spring.redis.timeout=0 # Connection timeout in milliseconds.

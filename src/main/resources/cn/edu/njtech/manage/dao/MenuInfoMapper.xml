@@ -23,6 +23,32 @@
     create_user, update_time, update_user, del_flag, description
   </sql>
 
+	<!--获取角色对应菜单列表-->
+	<select id="queryMenuByRoleId" resultMap="BaseResultMap">
+		SELECT
+		id,
+		parent_id,
+		menu_level,
+		menu_name,
+		menu_type,
+		sort_order,
+		url,
+		rm.operation,
+		operation_all,
+		description
+		FROM
+		t_menu_info mi
+		RIGHT JOIN
+		t_role_menu rm ON rm.menu_id = mi.id
+		WHERE
+		<if test="roleId != null">
+			rm.role_id = #{roleId}
+		</if>
+		AND mi.menu_type = #{menuType,jdbcType=INTEGER}
+		AND mi.del_flag = 0
+		ORDER BY menu_level ,parent_id, sort_order
+	</select>
+
 	<!--获取菜单列表-->
 	<select id="queryMenuList" resultMap="BaseResultMap">
 		SELECT
@@ -69,9 +95,6 @@
 		#{description,jdbcType=VARCHAR})
 	</insert>
 	<insert id="insertSelective" parameterType="cn.edu.njtech.manage.domain.MenuInfo">
-		<selectKey keyProperty="id" order="BEFORE" resultType="java.lang.Integer">
-			SELECT LAST_INSERT_ID()
-		</selectKey>
 		insert into t_menu_info
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			id,

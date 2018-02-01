@@ -1,91 +1,99 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE generatorConfiguration
-        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
-        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+		PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+		"http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
 
 <generatorConfiguration>
-    <!-- 具体配置内容 -->
-    <!--jdbc驱动-->
-    <classPathEntry
-            location="/Users/jackiechen/Apps/apache-maven-3.5.0/repository/mysql/mysql-connector-java/5.1.44/mysql-connector-java-5.1.44.jar"/>
+	<!-- 具体配置内容 -->
+	<!--jdbc驱动-->
+	<classPathEntry
+			location="/Users/jackiechen/Apps/apache-maven-3.5.0/repository/mysql/mysql-connector-java/5.1.44/mysql-connector-java-5.1.44.jar"/>
 
-    <context id="MysqlTables" targetRuntime="MyBatis3">
+	<context id="MysqlTables" targetRuntime="MyBatis3">
 
-        <!--取消注释-->
-        <commentGenerator>
-            <property name="suppressDate" value="true"/>
-            <property name="suppressAllComments" value="true"/>
-        </commentGenerator>
+		<!--取消注释-->
+		<commentGenerator>
+			<property name="suppressDate" value="true"/>
+			<property name="suppressAllComments" value="true"/>
+		</commentGenerator>
 
-        <!--连接信息-->
-        <jdbcConnection driverClass="com.mysql.jdbc.Driver"
-                        connectionURL="jdbc:mysql://172.19.216.49:3306/manage?useUnicode=true&amp;characterEncoding=utf8"
-                        userId="keycloak"
-                        password="admin">
-        </jdbcConnection>
+		<!--连接信息-->
+		<jdbcConnection driverClass="com.mysql.jdbc.Driver"
+						connectionURL="jdbc:mysql://172.19.216.49:3306/manage?useUnicode=true&amp;characterEncoding=utf8"
+						userId="keycloak"
+						password="admin">
+		</jdbcConnection>
 
-        <javaTypeResolver>
-            <property name="forceBigDecimals" value="false"/>
-        </javaTypeResolver>
+		<javaTypeResolver>
+			<property name="forceBigDecimals" value="false"/>
+		</javaTypeResolver>
 
-        <javaModelGenerator targetPackage="cn.edu.njtech.manage.domain" targetProject="src/main/java">
-            <property name="enableSubPackages" value="true"/>
-            <property name="trimStrings" value="true"/>
-        </javaModelGenerator>
+		<javaModelGenerator targetPackage="cn.edu.njtech.manage.domain" targetProject="src/main/java">
+			<property name="enableSubPackages" value="true"/>
+			<property name="trimStrings" value="true"/>
+		</javaModelGenerator>
 
-        <sqlMapGenerator targetPackage="cn.edu.njtech.manage.dao" targetProject="src/main/resources">
-            <property name="enableSubPackages" value="true"/>
-        </sqlMapGenerator>
+		<sqlMapGenerator targetPackage="cn.edu.njtech.manage.dao" targetProject="src/main/resources">
+			<property name="enableSubPackages" value="true"/>
+		</sqlMapGenerator>
 
-        <javaClientGenerator type="XMLMAPPER" targetPackage="cn.edu.njtech.manage.dao"
-                             targetProject="src/main/java">
-            <property name="enableSubPackages" value="true"/>
-        </javaClientGenerator>
+		<javaClientGenerator type="XMLMAPPER" targetPackage="cn.edu.njtech.manage.dao"
+							 targetProject="src/main/java">
+			<property name="enableSubPackages" value="true"/>
+		</javaClientGenerator>
 
-        <!--<table tableName="t_menu_info" domainObjectName="MenuInfo"-->
-               <!--enableInsert="true" enableSelectByExample="false" enableUpdateByExample="false"-->
-               <!--enableDeleteByExample="false" enableCountByExample="false">-->
-            <!--&lt;!&ndash;useActualColumnNames 若为true，则采用列名作为实体属性名；为false则会将名称转为驼峰形式&ndash;&gt;-->
-            <!--<property name="useActualColumnNames" value="false"/>-->
-            <!--&lt;!&ndash;用来指定自动生成主键的属性，MBG在生成insert的SQL映射文件中插入一个<selectKey>元素，其包含两个必选属性-->
-                <!--column：列名-->
-                <!--sqlStatement:返回新值的Sql语句，预定义值：Cloudscape DB2 DB2_MF Derby HSQLDB Informix MySql SqlServer SYBASE JDBC&ndash;&gt;-->
-            <!--<generatedKey column="ID" sqlStatement="MySql"/>-->
-            <!--&lt;!&ndash;用来重写列，MBG会将指定的column的值填充为java bean中property的值，其包含一个必填属性-->
-                <!--column：需要重写的列-->
-                <!--property[非必填]：要使用的java属性的名称（若不填，则默认为同名或同名驼峰形式。此时该项完全可以不配置）&ndash;&gt;-->
-            <!--&lt;!&ndash;<columnOverride column="DATE_FIELD" property="startDate" />&ndash;&gt;-->
-            <!--&lt;!&ndash;<columnOverride column="LONG_VARCHAR_FIELD" jdbcType="VARCHAR" />&ndash;&gt;-->
-            <!--&lt;!&ndash;屏蔽无需生成的列&ndash;&gt;-->
-            <!--&lt;!&ndash;<ignoreColumn column="FRED" />&ndash;&gt;-->
-        <!--</table>-->
+		<!--<table tableName="t_menu_info" domainObjectName="MenuInfo"-->
+		<!--enableInsert="true" enableSelectByExample="false" enableUpdateByExample="false"-->
+		<!--enableDeleteByExample="false" enableCountByExample="false">-->
+		<!--&lt;!&ndash;useActualColumnNames 若为true，则采用列名作为实体属性名；为false则会将名称转为驼峰形式&ndash;&gt;-->
+		<!--<property name="useActualColumnNames" value="false"/>-->
+		<!--&lt;!&ndash;用来指定自动生成主键的属性，MBG在生成insert的SQL映射文件中插入一个<selectKey>元素，其包含两个必选属性-->
+		<!--column：列名-->
+		<!--sqlStatement:返回新值的Sql语句，预定义值：Cloudscape DB2 DB2_MF Derby HSQLDB Informix MySql SqlServer SYBASE JDBC&ndash;&gt;-->
+		<!--<generatedKey column="ID" sqlStatement="MySql"/>-->
+		<!--&lt;!&ndash;用来重写列，MBG会将指定的column的值填充为java bean中property的值，其包含一个必填属性-->
+		<!--column：需要重写的列-->
+		<!--property[非必填]：要使用的java属性的名称（若不填，则默认为同名或同名驼峰形式。此时该项完全可以不配置）&ndash;&gt;-->
+		<!--&lt;!&ndash;<columnOverride column="DATE_FIELD" property="startDate" />&ndash;&gt;-->
+		<!--&lt;!&ndash;<columnOverride column="LONG_VARCHAR_FIELD" jdbcType="VARCHAR" />&ndash;&gt;-->
+		<!--&lt;!&ndash;屏蔽无需生成的列&ndash;&gt;-->
+		<!--&lt;!&ndash;<ignoreColumn column="FRED" />&ndash;&gt;-->
+		<!--</table>-->
 
-        <!--<table tableName="t_role_info" domainObjectName="RoleInfo"-->
-               <!--enableInsert="true" enableSelectByExample="false" enableUpdateByExample="false"-->
-               <!--enableDeleteByExample="false" enableCountByExample="false">-->
-            <!--<property name="useActualColumnNames" value="false"/>-->
-            <!--<generatedKey column="ID" sqlStatement="MySql"/>-->
-        <!--</table>-->
+		<!--<table tableName="t_role_info" domainObjectName="RoleInfo"-->
+		<!--enableInsert="true" enableSelectByExample="false" enableUpdateByExample="false"-->
+		<!--enableDeleteByExample="false" enableCountByExample="false">-->
+		<!--<property name="useActualColumnNames" value="false"/>-->
+		<!--<generatedKey column="ID" sqlStatement="MySql"/>-->
+		<!--</table>-->
 
-        <table tableName="t_user_info" domainObjectName="UserInfo"
-               enableInsert="true" enableSelectByExample="false" enableUpdateByExample="false"
-               enableDeleteByExample="false" enableCountByExample="false">
-            <property name="useActualColumnNames" value="false"/>
-            <generatedKey column="ID" sqlStatement="MySql"/>
-        </table>
+		<!--<table tableName="t_operation" domainObjectName="Operation"-->
+		<!--enableInsert="false" enableSelectByExample="false" enableUpdateByExample="false"-->
+		<!--enableDeleteByExample="false" enableCountByExample="false">-->
+		<!--<property name="useActualColumnNames" value="false"/>-->
+		<!--&lt;!&ndash;<generatedKey column="ID" sqlStatement="MySql"/>&ndash;&gt;-->
+		<!--</table>-->
 
-        <!--<table tableName="t_role_menu" domainObjectName="RoleMenu"-->
-               <!--enableInsert="true" enableSelectByExample="false" enableUpdateByExample="false"-->
-               <!--enableDeleteByExample="false" enableCountByExample="false">-->
-            <!--<property name="useActualColumnNames" value="false"/>-->
-            <!--<generatedKey column="ID" sqlStatement="MySql"/>-->
-        <!--</table>-->
+		<!--<table tableName="t_role_menu" domainObjectName="RoleMenu"-->
+		<!--enableInsert="true" enableSelectByExample="false" enableUpdateByExample="false"-->
+		<!--enableDeleteByExample="false" enableCountByExample="false">-->
+		<!--<property name="useActualColumnNames" value="false"/>-->
+		<!--<generatedKey column="ID" sqlStatement="MySql"/>-->
+		<!--</table>-->
 
-        <!--<table tableName="t_user_role" domainObjectName="UserRole"-->
-               <!--enableInsert="true" enableSelectByExample="false" enableUpdateByExample="false"-->
-               <!--enableDeleteByExample="false" enableCountByExample="false">-->
-            <!--<property name="useActualColumnNames" value="false"/>-->
-            <!--<generatedKey column="ID" sqlStatement="MySql"/>-->
-        <!--</table>-->
-    </context>
+		<!--<table tableName="t_user_role" domainObjectName="UserRole"-->
+		<!--enableInsert="true" enableSelectByExample="false" enableUpdateByExample="false"-->
+		<!--enableDeleteByExample="false" enableCountByExample="false">-->
+		<!--<property name="useActualColumnNames" value="false"/>-->
+		<!--<generatedKey column="ID" sqlStatement="MySql"/>-->
+		<!--</table>-->
+
+		<table tableName="t_user_info" domainObjectName="UserInfoTest"
+			   enableInsert="false" enableSelectByExample="false" enableUpdateByExample="false"
+			   enableDeleteByExample="false" enableCountByExample="false">
+			<property name="useActualColumnNames" value="false"/>
+			<!--<generatedKey column="ID" sqlStatement="MySql"/>-->
+		</table>
+
+	</context>
 </generatorConfiguration>

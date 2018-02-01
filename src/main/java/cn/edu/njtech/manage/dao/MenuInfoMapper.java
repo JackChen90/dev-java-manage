@@ -18,10 +18,19 @@ public interface MenuInfoMapper {
 	int insertSelective(MenuInfo record);
 
 	/**
-	 * 获取菜单列表
+	 * 鑾峰彇鑿滃崟鍒楄〃
 	 *
-	 * @param roleIds 角色ids
-	 * @param menuType 菜单类型 0系统菜单 1后面管理菜单
+	 * @param roleId 瑙掕壊id
+	 * @param menuType 鑿滃崟绫诲瀷 0绯荤粺鑿滃崟 1鍚庨潰绠＄悊鑿滃崟
+	 * @return
+	 */
+	List<MenuInfoDTO> queryMenuByRoleId(@Param("roleId") Integer roleId,
+									@Param("menuType") Integer menuType);
+	/**
+	 * 鑾峰彇鑿滃崟鍒楄〃
+	 *
+	 * @param roleIds 瑙掕壊ids
+	 * @param menuType 鑿滃崟绫诲瀷 0绯荤粺鑿滃崟 1鍚庨潰绠＄悊鑿滃崟
 	 * @return
 	 */
 	List<MenuInfoDTO> queryMenuList(@Param("roleIds") List<Integer> roleIds,

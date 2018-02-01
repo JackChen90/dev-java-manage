@@ -8,12 +8,12 @@ package cn.edu.njtech.manage.constant;
 public class JudgeConstant {
 
 	/**
-     * 校验成功标志
-     */
-   private static final Boolean JUDGE_SUCCESS = true;
+	 * 校验成功标志
+	 */
+	public static final Boolean JUDGE_SUCCESS = true;
 
-    /**
-     * 校验失败标志
-     */
-	private static final Boolean JUDGE_FAIL = false;
+	/**
+	 * 校验失败标志
+	 */
+	public static final Boolean JUDGE_FAIL = false;
 }
