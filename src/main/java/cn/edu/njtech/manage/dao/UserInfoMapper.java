@@ -38,4 +38,12 @@ public interface UserInfoMapper {
 	int updateByPrimaryKeySelective(UserInfo record);
 
 	int updateByPrimaryKey(UserInfo record);
+
+	/**
+	 * 查询用户名记录数
+	 *
+	 * @param userName 入参用户名
+	 * @return
+	 */
+	int countUserName(String userName);
 }

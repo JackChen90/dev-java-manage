@@ -29,4 +29,12 @@ public interface IUserService {
 	 * @return
 	 */
 	Integer queryUserInfoCount(GridDataDTO dto);
+
+	/**
+	 * 校验用户名是否存在
+	 *
+	 * @param userName 入参用户名
+	 * @return
+	 */
+	boolean checkUserName(String userName);
 }

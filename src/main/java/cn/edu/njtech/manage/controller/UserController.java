@@ -23,10 +23,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.HashMap;
@@ -78,40 +75,6 @@ public class UserController {
 		return result;
 	}
 
-//	/**
-//	 * 初始化用户信息列表
-//	 *
-//	 * @param menuId   用户菜单id
-//	 * @param type     菜单类型
-//	 * @param pageNum  当前页
-//	 * @param pageSize 每页数量
-//	 * @return
-//	 */
-//	@RequestMapping(value = "user/initData")
-//	@ResponseBody
-//	public JsonResponse queryUserInfo(@RequestParam Integer menuId,
-//									  @RequestParam Integer type,
-//									  GridDataDTO dto) {
-//		JsonResponse jsonResponse;
-//		Map<String, Object> result = new HashMap<>(16);
-//		//获取用户授权
-//		List<GrantedAuthority> authorities = (List<GrantedAuthority>) SecurityContextHolder
-//				.getContext().getAuthentication().getAuthorities();
-//		//获取用户角色列表
-//		HandleResult<List<Integer>> handleResult = AuthorityUtil.convertRoles(authorities);
-//		//查询用户操作权限
-//		OperationConstant operation = operationService.queryOperation(handleResult.getData(), menuId, type);
-//		result.put("operation", operation);
-//
-//		Map<String, Object> condition = new HashMap<>(16);
-//		//查询用户信息列表
-//		List<UserInfoDTO> userInfo = userService.queryUserInfoList(condition, dto);
-//
-//		result.put("gridData", userInfo);
-//		jsonResponse = new JsonResponse(HandleConstant.HANDLE_SUCCESS, result);
-//		return jsonResponse;
-//	}
-
 	@RequestMapping(value = "user/operationData")
 	@ResponseBody
 	public JsonResponse queryOperationData(@RequestParam Integer menuId,
@@ -136,7 +99,7 @@ public class UserController {
 	 */
 	@RequestMapping(value = "user/queryData")
 	@ResponseBody
-	public JqGrid<UserInfoDTO> queryUserInfoData(HttpServletRequest request, GridDataDTO dto) {
+	public JqGrid<UserInfoDTO> queryUserInfoData(GridDataDTO dto) {
 		logger.info("=== queryUserInfoData start ===, dto:{}", dto);
 		HandleResult handleResult = judgeRequest(dto);
 		if (HandleConstant.HANDLE_FAIL.equals(handleResult.getFlag())) {
@@ -160,6 +123,27 @@ public class UserController {
 		return gridData;
 	}
 
+	/**
+	 * 校验用户名是否已存在
+	 *
+	 * @param userName 入参用户名
+	 * @return
+	 */
+	@RequestMapping(value = "/user/checkUserName", method = RequestMethod.POST)
+	@ResponseBody
+	public JsonResponse checkUserName(@RequestParam String userName) {
+		JsonResponse jsonResponse;
+		logger.info("=== checkUserName start ===, username:{}", userName);
+		boolean flag = userService.checkUserName(userName);
+		if (flag) {
+			jsonResponse = new JsonResponse(HandleConstant.HANDLE_SUCCESS, true);
+		} else {
+			jsonResponse = new JsonResponse(HandleConstant.HANDLE_SUCCESS,
+					null, "已存在相同用户名", false);
+		}
+		logger.info("=== checkUserName success ===, result:{}", flag);
+		return jsonResponse;
+	}
 
 	/**
 	 * 校验入参

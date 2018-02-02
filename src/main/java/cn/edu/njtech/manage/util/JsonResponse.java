@@ -38,7 +38,7 @@ public class JsonResponse {
 	private JsonResponse() {
 	}
 
-	public JsonResponse(Integer status) {
+	public JsonResponse(Boolean status) {
 		if (HandleConstant.HANDLE_SUCCESS.equals(status)) {
 			this.status = HandleConstant.HANDLE_SUCCESS;
 			this.code = ErrorCode.SUCCESS;

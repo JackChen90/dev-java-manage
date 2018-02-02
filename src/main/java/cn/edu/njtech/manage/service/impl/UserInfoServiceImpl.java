@@ -91,4 +91,13 @@ public class UserInfoServiceImpl implements IUserService {
 		logger.info("=== queryUserInfoCount success ===, count:{}", count);
 		return count;
 	}
+
+	@Override
+	public boolean checkUserName(String userName) {
+		logger.info("=== checkUserName start ===, userName:{}", userName);
+		int count = userInfoMapper.countUserName(userName);
+		logger.info("=== checkUserName success ===, count:{}", count);
+
+		return count > 0 ? false : true;
+	}
 }

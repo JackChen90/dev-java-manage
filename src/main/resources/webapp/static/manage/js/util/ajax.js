@@ -9,6 +9,7 @@ function ajaxPostJson(url, async, paramdata, callback) {
     if (async == null || async == "undefined" || async == "null") {
         async = true;
     }
+    var syncData = null;
     $.ajax({
         type: 'POST',
         cache: false,
@@ -21,15 +22,12 @@ function ajaxPostJson(url, async, paramdata, callback) {
             if (result != null && result.status) {
                 var data = result.data;
                 if (callback) {
-                    callback(data);
+                    if (!async){
+                        syncData = callback(data);
+                    }else {
+                        callback(data);
+                    }
                 }
-            } else {
-                // parent.layer.confirm('资料库正在维护中，请耐心等待开放~', {
-                //     icon: 6,
-                //     btn: ['确定'] //按钮
-                // }, function () {
-                //     gotoHome();
-                // });
             }
         },
         error: function (html) {
@@ -39,4 +37,5 @@ function ajaxPostJson(url, async, paramdata, callback) {
         complete: function () {
         }
     });
+    return syncData;
 }

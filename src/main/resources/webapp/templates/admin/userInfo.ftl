@@ -14,6 +14,8 @@
     <link href="${request.contextPath}/webapp/static/css/plugins/jqgrid/ui.jqgridffe4.css?0820" rel="stylesheet">
     <link href="${request.contextPath}/webapp/static/css/animate.min.css" rel="stylesheet">
     <link href="${request.contextPath}/webapp/static/css/style.min862f.css?v=4.1.0" rel="stylesheet">
+    <link href="${request.contextPath}/webapp/static/css/plugins/datapicker/datepicker3.css" rel="stylesheet">
+
     <style>
         .wrapper {
             height: 100%;
@@ -51,6 +53,7 @@
 <script src="${request.contextPath}/webapp/static/js/plugins/peity/jquery.peity.min.js"></script>
 <script src="${request.contextPath}/webapp/static/js/plugins/jqgrid/i18n/grid.locale-cnffe4.js?0820"></script>
 <script src="${request.contextPath}/webapp/static/js/plugins/jqgrid/jquery.jqGrid.minffe4.js?0820"></script>
+<script src="${request.contextPath}/webapp/static/js/plugins/datapicker/bootstrap-datepicker.js"></script>
 <script>
     var menuId = ${menuId};
     var type =${type};

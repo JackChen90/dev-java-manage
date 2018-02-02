@@ -56,6 +56,13 @@
 			</if>
 		</trim>
 	</select>
+	<!--查询用户名记录数-->
+	<select id="countUserName" parameterType="java.lang.String" resultType="java.lang.Integer">
+		SELECT
+		COUNT(*)
+		FROM t_user_info
+		WHERE user_name = #{userName}
+	</select>
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from t_user_info
     where id = #{id,jdbcType=INTEGER}
