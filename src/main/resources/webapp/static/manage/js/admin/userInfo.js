@@ -13,8 +13,8 @@ var user = {
     operationUrl: "/user/operationData",
     //用户信息数据url
     queryUrl: "/user/queryData",
-    //新增/编辑数据url
-    editUrl: "/user/editData",
+    //新增/编辑/删除数据url
+    editUrl: "/user/operateUserData",
     //校验用户名不重复
     checkUserNameUrl: "/user/checkUserName",
     convertDel: function (cellvalue, options, rowObject) {
@@ -42,7 +42,7 @@ var user = {
             return;
         }
         //调用校验用户名服务
-       return ajaxPostJson(user.contextPath + user.checkUserNameUrl +"?userName="+ userName, false,
+        return ajaxPostJson(user.contextPath + user.checkUserNameUrl + "?userName=" + userName, false,
             null, user.checkUserNameCallback);
     },
     createUserGrid: function () {
@@ -80,10 +80,10 @@ var user = {
                 width: 90,
                 editrules: {
                     required: true,
-                    custom: true,
-                    custom_func: function (param) {
-                        return user.checkUserName(param)
-                    }
+                    // custom: true,
+                    // custom_func: function (param) {
+                    //     return user.checkUserName(param)
+                    // }
                 },
                 formoptions: {label: '用户名<font color=\'red\'> *</font>'}
             }, {
@@ -173,8 +173,18 @@ var user = {
     },
     naviConfig: function (data) {
         $("#user_list").jqGrid("navGrid", "#pager_list", data,
-            {reloadAfterSubmit: true},
-            {},
+            {//edit option
+                reloadAfterSubmit: true,
+                beforeSubmit: function (postdata, formid) {
+                    return [true, ''];
+                }
+            },
+            {//add option
+                reloadAfterSubmit: true,
+                beforeSubmit: function (postdata, formid) {
+                    return user.checkUserName(postdata.userName);
+                }
+            },
             {},
             {sopt: ['eq', 'ne', 'cn', 'nc']});
     },

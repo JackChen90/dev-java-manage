@@ -1,5 +1,6 @@
 package cn.edu.njtech.manage.controller;
 
+import cn.edu.njtech.manage.constant.ErrorCode;
 import cn.edu.njtech.manage.constant.HandleConstant;
 import cn.edu.njtech.manage.constant.JudgeConstant;
 import cn.edu.njtech.manage.constant.OperationConstant;
@@ -14,6 +15,7 @@ import cn.edu.njtech.manage.util.HandleResult;
 import cn.edu.njtech.manage.util.JqGrid;
 import cn.edu.njtech.manage.util.JsonResponse;
 import org.apache.catalina.servlet4preview.http.HttpServletRequest;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -169,5 +171,53 @@ public class UserController {
 		}
 		result = new HandleResult(JudgeConstant.JUDGE_SUCCESS);
 		return result;
+	}
+
+	/**
+	 * 校验入参
+	 *
+	 * @param dto 入参实体
+	 * @return HandleResult
+	 */
+	private HandleResult judgeRequest(UserInfoDTO dto) {
+		HandleResult result;
+		if (null == dto) {
+			result = new HandleResult(JudgeConstant.JUDGE_FAIL, "params empty");
+			return result;
+		}
+		//校验oper
+		if (StringUtils.isEmpty(dto.getOper())) {
+			result = new HandleResult(JudgeConstant.JUDGE_FAIL, "oper is null");
+			return result;
+		} else if ("edit".equals(dto.getOper()) || "del".equals(dto.getOper())) {
+			//编辑或删除操作校验id不为空
+			if (null == dto.getId()) {
+				result = new HandleResult(JudgeConstant.JUDGE_FAIL, "id is null");
+				return result;
+			}
+		}
+		result = new HandleResult(JudgeConstant.JUDGE_SUCCESS);
+		return result;
+	}
+
+	/**
+	 * 新增/编辑/删除数据操作
+	 *
+	 * @param dto 入参数据
+	 * @return
+	 */
+	@RequestMapping(value = "/user/operateUserData", method = RequestMethod.POST)
+	@ResponseBody
+	public JsonResponse operateData(UserInfoDTO dto) {
+		JsonResponse jsonResponse;
+		logger.info("=== operateData start ===, dto:{}", dto);
+		HandleResult handleResult = judgeRequest(dto);
+		if (HandleConstant.HANDLE_FAIL.equals(handleResult.getFlag())) {
+			logger.error("=== operateData judgeRequest fail ===, message:{}", handleResult.getMessage());
+			return new JsonResponse(HandleConstant.HANDLE_FAIL, ErrorCode.WRONG_PARAM, handleResult.getMessage());
+		}
+		//执行数据操作
+		userService.operateUserInfo(dto);
+		return new JsonResponse(HandleConstant.HANDLE_SUCCESS);
 	}
 }

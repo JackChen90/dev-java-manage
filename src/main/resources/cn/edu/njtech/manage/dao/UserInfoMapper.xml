@@ -63,7 +63,8 @@
 		FROM t_user_info
 		WHERE user_name = #{userName}
 	</select>
-	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+	<!--根据id删除用户信息-->
+	<delete id="deleteById" parameterType="java.lang.Integer">
     delete from t_user_info
     where id = #{id,jdbcType=INTEGER}
   </delete>
@@ -77,10 +78,10 @@
       #{delFlag,jdbcType=CHAR}, #{createTime,jdbcType=TIMESTAMP}, #{createUser,jdbcType=VARCHAR}, 
       #{updateTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR})
   </insert>
-	<insert id="insertSelective" parameterType="cn.edu.njtech.manage.domain.UserInfo">
+	<!--新增用户信息-->
+	<insert id="insertUserInfo" parameterType="cn.edu.njtech.manage.domain.UserInfo">
 		insert into t_user_info
 		<trim prefix="(" suffix=")" suffixOverrides=",">
-			id,
 			<if test="password != null">
 				password,
 			</if>
@@ -113,7 +114,6 @@
 			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
-			#{id,jdbcType=INTEGER},
 			<if test="password != null">
 				#{password,jdbcType=VARCHAR},
 			</if>
@@ -146,7 +146,8 @@
 			</if>
 		</trim>
 	</insert>
-	<update id="updateByPrimaryKeySelective" parameterType="cn.edu.njtech.manage.domain.UserInfo">
+	<!--更新用户信息-->
+	<update id="updateUserInfo" parameterType="cn.edu.njtech.manage.domain.UserInfo">
 		update t_user_info
 		<set>
 			<if test="password != null">

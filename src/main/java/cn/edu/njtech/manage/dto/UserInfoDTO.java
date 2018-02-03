@@ -1,7 +1,9 @@
 package cn.edu.njtech.manage.dto;
 
+import cn.edu.njtech.manage.domain.UserInfo;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import javax.jws.soap.SOAPBinding;
 import java.util.Date;
 
 /**
@@ -10,6 +12,11 @@ import java.util.Date;
  * @description UserInfoDTO
  */
 public class UserInfoDTO {
+
+	/**
+	 * 操作类型 add/edit/del
+	 */
+	private String oper;
 
 	/**
 	 * 用户id
@@ -66,10 +73,26 @@ public class UserInfoDTO {
 	 */
 	private String updateUser;
 
+	public static UserInfo toEntity(UserInfoDTO dto){
+		UserInfo userInfo = new UserInfo();
+		userInfo.setId(dto.getId());
+		userInfo.setUserName(dto.getUserName());
+		userInfo.setRealName(dto.getRealName());
+		userInfo.setPhone(dto.getPhone());
+		userInfo.setPassword(dto.getPassword());
+		userInfo.setDescription(dto.getDescription());
+		userInfo.setCreateTime(dto.getCreateTime());
+		userInfo.setCreateUser(dto.getCreateUser());
+		userInfo.setUpdateTime(dto.getUpdateTime());
+		userInfo.setUpdateUser(dto.getUpdateUser());
+		userInfo.setDelFlag(dto.getDelFlag());
+		return userInfo;
+	}
 	@Override
 	public String toString() {
 		return "UserInfoDTO{" +
-				"id=" + id +
+				"oper='" + oper + '\'' +
+				", id=" + id +
 				", password='" + password + '\'' +
 				", realName='" + realName + '\'' +
 				", userName='" + userName + '\'' +
@@ -81,6 +104,14 @@ public class UserInfoDTO {
 				", updateTime=" + updateTime +
 				", updateUser='" + updateUser + '\'' +
 				'}';
+	}
+
+	public String getOper() {
+		return oper;
+	}
+
+	public void setOper(String oper) {
+		this.oper = oper;
 	}
 
 	public Integer getId() {

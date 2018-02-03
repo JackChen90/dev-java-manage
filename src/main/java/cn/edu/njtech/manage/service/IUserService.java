@@ -37,4 +37,10 @@ public interface IUserService {
 	 * @return
 	 */
 	boolean checkUserName(String userName);
+
+	/**
+	 * 新增/编辑/删除数据操作
+	 * @param dto
+	 */
+	void operateUserInfo(UserInfoDTO dto);
 }

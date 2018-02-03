@@ -11,11 +11,23 @@ import java.util.Map;
 @Mapper
 @Component("M_UserInfo")
 public interface UserInfoMapper {
-	int deleteByPrimaryKey(Integer id);
+	/**
+	 * 根据id删除用户信息
+	 *
+	 * @param id
+	 * @return
+	 */
+	int deleteById(Integer id);
 
 	int insert(UserInfo record);
 
-	int insertSelective(UserInfo record);
+	/**
+	 * 新增用户信息
+	 *
+	 * @param record 用户信息entity
+	 * @return
+	 */
+	int insertUserInfo(UserInfo record);
 
 	UserInfo selectByPrimaryKey(Integer id);
 
@@ -35,7 +47,13 @@ public interface UserInfoMapper {
 	 */
 	Integer queryUserInfoCount(Map<String, Object> condition);
 
-	int updateByPrimaryKeySelective(UserInfo record);
+	/**
+	 * 更新用户信息
+	 *
+	 * @param record 入参用户信息
+	 * @return
+	 */
+	int updateUserInfo(UserInfo record);
 
 	int updateByPrimaryKey(UserInfo record);
 
