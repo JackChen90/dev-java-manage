@@ -9,17 +9,19 @@ $(function () {
 
 
 var menu = {
-    //默认第一页
-    pageNum: 1,
-    //默认每页20条
-    pageSize: 20,
+    //jqGrid查询数据
     url: "menu/queryData",
     init: function () {
         ajaxPostJson(menu.url, false, {type: 1}, createMenu);
     }
 };
 
-
+/**
+ * 添加子菜单
+ * @param children
+ * @param level
+ * @returns {string}
+ */
 function addChildren(children, level) {
     if (!children) {
         return;
@@ -41,9 +43,7 @@ function addChildren(children, level) {
         } else {
             result += "<li><a class=\"J_menuItem\" href=\"" + children[i].url
                 + "?menuId=" + children[i].id
-                + "&type=" + 1
-                + "&pageNum=" + menu.pageNum
-                + "&pageSize=" + menu.pageSize + "\">" + children[i].menuName + "</a>";
+                + "&type=" + 1 + "\">" + children[i].menuName + "</a>";
         }
         result += "</li>";
     }
@@ -65,8 +65,6 @@ function createMenu(data) {
             result += "<a class=\"J_menuItem\" href=\"" + item.url + "?"
                 + "menuId=" + item.id
                 + "&type=" + 1
-                + "&pageNum=" + menu.pageNum
-                + "&pageSize=" + menu.pageSize
                 + "\">";
         }
         result += "<i class=\"fa fa-columns\"></i>" +

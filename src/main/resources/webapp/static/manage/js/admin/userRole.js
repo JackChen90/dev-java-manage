@@ -3,20 +3,18 @@
  * @create 2018/01/29
  * @description userInfo js
  */
-var user = {
+var userRole = {
     contextPath: null,
     //默认第一页
     pageNum: 1,
     //默认每页20条
     pageSize: 20,
     //操作权限数据url
-    operationUrl: "/user/operationData",
-    //用户信息数据url
-    queryUrl: "/user/queryData",
+    operationUrl: "/userRole/operationData",
+    //用户角色信息数据url
+    queryUrl: "/userRole/queryData",
     //新增/编辑/删除数据url
-    editUrl: "/user/operateUserData",
-    //校验用户名不重复
-    checkUserNameUrl: "/user/checkUserName",
+    editUrl: "/userRole/operateUserRoleData",
     convertDel: function (cellvalue, options, rowObject) {
         var newCellValue = null;
         switch (cellvalue) {
@@ -30,23 +28,8 @@ var user = {
         }
         return newCellValue;
     },
-    checkUserNameCallback: function (data) {
-        if (data) {
-            return [true, ''];
-        } else {
-            return [false, '已存在相同用户名'];
-        }
-    },
-    checkUserName: function (userName) {
-        if (!userName) {
-            return;
-        }
-        //调用校验用户名服务
-        return ajaxPostJson(user.contextPath + user.checkUserNameUrl + "?userName=" + userName, false,
-            null, user.checkUserNameCallback);
-    },
-    createUserGrid: function () {
-        var url = user.contextPath + user.queryUrl;
+    createUserRoleGrid: function () {
+        var url = userRole.contextPath + userRole.queryUrl;
         var height = $(".jqGrid_wrapper").height();
         // $("#user_list").setGridHeight(height);
         $("#user_list").jqGrid({
@@ -66,7 +49,7 @@ var user = {
                     repeatitems: false
                 }
             },
-            colNames: ["id", "用户名", "真实姓名", "密码", "电话", "描述", "创建时间", "创建人", "更新时间", "更新人", "状态"],
+            colNames: ["id", "用户id", "角色id", "角色名称", "描述", "创建时间", "创建人", "更新时间", "更新人", "角色状态"],
             colModel: [{
                 name: "id",
                 index: "id",
@@ -74,49 +57,34 @@ var user = {
                 editable: false,
                 hidden: true
             }, {
-                name: "userName",
-                index: "user_name",
+                name: "userId",
+                index: "user_id",
+                width: 60,
                 editable: true,
-                width: 90,
+                hidden: true,
                 editrules: {
                     required: true
-                    // custom: true,
-                    // custom_func: function (param) {
-                    //     return user.checkUserName(param)
-                    // }
                 },
-                formoptions: {label: '用户名<font color=\'red\'> *</font>'}
+                formoptions: {label: '用户名称<font color=\'red\'> *</font>'}
             }, {
-                name: "realName",
-                index: "realName",
+                name: "roleId",
+                index: "role_id",
+                width: 60,
                 editable: true,
-                width: 100,
+                hidden: true,
                 editrules: {
                     required: true
                 },
-                formoptions: {label: '真实姓名<font color=\'red\'> *</font>'}
+                formoptions: {label: '角色名称<font color=\'red\'> *</font>'}
             }, {
-                name: "password",
-                index: "password",
-                editable: true,
-                width: 80,
-                editrules: {
-                    required: true
-                },
-                formoptions: {label: '密码<font color=\'red\'> *</font>'}
-            }, {
-                name: "phone",
-                index: "phone",
-                editable: true,
-                width: 100,
-                editrules: {
-                    required: true
-                },
-                formoptions: {label: '电话<font color=\'red\'> *</font>'}
+                name: "roleName",
+                index: "roleName",
+                editable: false,
+                width: 80
             }, {
                 name: "description",
                 index: "description",
-                editable: true,
+                editable: false,
                 width: 120
             }, {
                 name: "createTime",
@@ -124,11 +92,6 @@ var user = {
                 editable: false,
                 width: 100,
                 formatter: "date"
-                // editoptions: {
-                //     dataInit : function (elem) {
-                //         $(elem).datepicker();
-                //     }
-                // }
             }, {
                 name: "createUser",
                 index: "createUser",
@@ -139,12 +102,7 @@ var user = {
                 index: "updateTime",
                 editable: false,
                 width: 100,
-                formatter: "date",
-                editoptions: {
-                    dataInit: function (elem) {
-                        $(elem).datepicker();
-                    }
-                }
+                formatter: "date"
             }, {
                 name: "updateUser",
                 index: "updateUser",
@@ -155,21 +113,26 @@ var user = {
                 index: "delFlag",
                 editable: false,
                 width: 60,
-                formatter: user.convertDel
+                formatter: userRole.convertDel
             }],
             pager: "#pager_list",
             viewrecords: true,
-            caption: "用户信息管理",
-            editurl: user.contextPath + user.editUrl,
+            grouping: true,
+            groupingView: {
+                groupField: ['userId'],
+                groupDataSorted: true
+            },
+            caption: "用户权限信息管理",
+            editurl: userRole.contextPath + userRole.editUrl,
             hidegrid: false
         });
     },
     init: function (menuId, type) {
         //初始化数据
-        user.createUserGrid();
+        userRole.createUserRoleGrid();
         //初始化操作数据
-        var operationUrl = user.contextPath + user.operationUrl + "?menuId=" + menuId + "&type=" + type;
-        ajaxPostJson(operationUrl, true, {menuId: menuId, type: type}, user.naviConfig);
+        var operationUrl = userRole.contextPath + userRole.operationUrl + "?menuId=" + menuId + "&type=" + type;
+        ajaxPostJson(operationUrl, true, {menuId: menuId, type: type}, userRole.naviConfig);
     },
     naviConfig: function (data) {
         $("#user_list").jqGrid("navGrid", "#pager_list", data,
@@ -182,7 +145,7 @@ var user = {
             {//add option
                 reloadAfterSubmit: true,
                 beforeSubmit: function (postdata, formid) {
-                    return user.checkUserName(postdata.userName);
+                    return [true, ''];
                 }
             },
             {},

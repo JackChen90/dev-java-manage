@@ -137,7 +137,7 @@ public class UserInfoServiceImpl implements IUserService {
 	private void deleteUserInfo(UserInfoDTO dto) {
 		logger.info("=== deleteUserInfo start ===");
 		//删除用户信息
-		int count = userInfoMapper.deleteById(dto.getId());
+		int count = userInfoMapper.deleteById(Integer.valueOf(dto.getId()));
 		logger.info("=== deleteUserInfo success ===, rows count:{}", count);
 	}
 

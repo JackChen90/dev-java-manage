@@ -36,16 +36,16 @@ public enum GridSearchOperation {
 		switch (this) {
 			case EQ:
 			default:
-				operation = "= \'" + searchString + "\'";
+				operation = " = \'" + searchString + "\' ";
 				break;
 			case NE:
-				operation = "<> \'" + searchString + "\'";
+				operation = " <> \'" + searchString + "\' ";
 				break;
 			case CN:
-				operation = "like \'%" + searchString + "%\'";
+				operation = " like \'%" + searchString + "%\' ";
 				break;
 			case NC:
-				operation = "not ike \'%" + searchString + "%\'";
+				operation = " not like \'%" + searchString + "%\' ";
 		}
 		return operation;
 	}

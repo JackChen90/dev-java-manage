@@ -22,7 +22,7 @@ spring:
     check-template-location: false
   datasource:
     name: test
-    url: jdbc:mysql://172.19.216.49:3306/manage
+    url: jdbc:mysql://172.19.216.49:3306/manage?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true
     username: keycloak
     password: admin
     # 使用druid数据源

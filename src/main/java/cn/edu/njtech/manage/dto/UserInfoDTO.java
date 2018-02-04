@@ -21,7 +21,7 @@ public class UserInfoDTO {
 	/**
 	 * 用户id
 	 */
-	private Integer id;
+	private String id;
 
 	/**
 	 * 用户密码
@@ -73,9 +73,9 @@ public class UserInfoDTO {
 	 */
 	private String updateUser;
 
-	public static UserInfo toEntity(UserInfoDTO dto){
+	public static UserInfo toEntity(UserInfoDTO dto) {
 		UserInfo userInfo = new UserInfo();
-		userInfo.setId(dto.getId());
+		userInfo.setId(dto.getId() == null ? null : Integer.valueOf(dto.getId()));
 		userInfo.setUserName(dto.getUserName());
 		userInfo.setRealName(dto.getRealName());
 		userInfo.setPhone(dto.getPhone());
@@ -88,6 +88,7 @@ public class UserInfoDTO {
 		userInfo.setDelFlag(dto.getDelFlag());
 		return userInfo;
 	}
+
 	@Override
 	public String toString() {
 		return "UserInfoDTO{" +
@@ -114,11 +115,11 @@ public class UserInfoDTO {
 		this.oper = oper;
 	}
 
-	public Integer getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(Integer id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
@@ -169,6 +170,7 @@ public class UserInfoDTO {
 	public void setDelFlag(String delFlag) {
 		this.delFlag = delFlag == null ? null : delFlag.trim();
 	}
+
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
 	public Date getCreateTime() {
 		return createTime;
@@ -185,6 +187,7 @@ public class UserInfoDTO {
 	public void setCreateUser(String createUser) {
 		this.createUser = createUser == null ? null : createUser.trim();
 	}
+
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
 	public Date getUpdateTime() {
 		return updateTime;

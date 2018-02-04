@@ -4,9 +4,7 @@ import cn.edu.njtech.manage.constant.ErrorCode;
 import cn.edu.njtech.manage.constant.HandleConstant;
 import cn.edu.njtech.manage.constant.JudgeConstant;
 import cn.edu.njtech.manage.constant.OperationConstant;
-import cn.edu.njtech.manage.domain.UserInfo;
 import cn.edu.njtech.manage.dto.GridDataDTO;
-import cn.edu.njtech.manage.dto.PageDTO;
 import cn.edu.njtech.manage.dto.UserInfoDTO;
 import cn.edu.njtech.manage.service.IOperationService;
 import cn.edu.njtech.manage.service.IUserService;
@@ -19,18 +17,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Required;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author jackie chen
@@ -180,7 +174,7 @@ public class UserController {
 	 * @return HandleResult
 	 */
 	private HandleResult judgeRequest(UserInfoDTO dto) {
-		HandleResult result;
+		HandleResult result = null;
 		if (null == dto) {
 			result = new HandleResult(JudgeConstant.JUDGE_FAIL, "params empty");
 			return result;
@@ -189,10 +183,23 @@ public class UserController {
 		if (StringUtils.isEmpty(dto.getOper())) {
 			result = new HandleResult(JudgeConstant.JUDGE_FAIL, "oper is null");
 			return result;
-		} else if ("edit".equals(dto.getOper()) || "del".equals(dto.getOper())) {
-			//编辑或删除操作校验id不为空
-			if (null == dto.getId()) {
-				result = new HandleResult(JudgeConstant.JUDGE_FAIL, "id is null");
+		} else {
+			boolean flag = true;
+			switch (dto.getOper()) {
+				case "edit":
+				case "del":
+					//编辑或删除操作校验id不为空
+					if (StringUtils.isEmpty(dto.getId())) {
+						flag = false;
+						result = new HandleResult(JudgeConstant.JUDGE_FAIL, "id is null");
+					}
+					break;
+				case "add":
+				default:
+					//新增时id设置为null（jqgrid默认传"_empty"，后面强转要出错）
+					dto.setId(null);
+			}
+			if (!flag) {
 				return result;
 			}
 		}
