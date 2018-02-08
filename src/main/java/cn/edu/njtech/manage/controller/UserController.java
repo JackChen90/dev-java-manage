@@ -6,19 +6,13 @@ import cn.edu.njtech.manage.constant.JudgeConstant;
 import cn.edu.njtech.manage.constant.OperationConstant;
 import cn.edu.njtech.manage.dto.GridDataDTO;
 import cn.edu.njtech.manage.dto.UserInfoDTO;
-import cn.edu.njtech.manage.service.IOperationService;
 import cn.edu.njtech.manage.service.IUserService;
-import cn.edu.njtech.manage.util.AuthorityUtil;
-import cn.edu.njtech.manage.util.HandleResult;
-import cn.edu.njtech.manage.util.JqGrid;
-import cn.edu.njtech.manage.util.JsonResponse;
+import cn.edu.njtech.manage.util.*;
 import org.apache.catalina.servlet4preview.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
@@ -37,10 +31,13 @@ public class UserController {
 	private Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Autowired
-	private IOperationService operationService;
+	private IUserService userService;
 
 	@Autowired
-	private IUserService userService;
+	private OperationUtil operationUtil;
+
+	@Autowired
+	private GridUtil gridUtil;
 
 	@InitBinder
 	protected void initBinder(WebDataBinder binder) {
@@ -76,13 +73,7 @@ public class UserController {
 	public JsonResponse queryOperationData(@RequestParam Integer menuId,
 										   @RequestParam Integer type) {
 		JsonResponse jsonResponse;
-		//获取用户授权
-		List<GrantedAuthority> authorities = (List<GrantedAuthority>) SecurityContextHolder
-				.getContext().getAuthentication().getAuthorities();
-		//获取用户角色列表
-		HandleResult<List<Integer>> handleResult = AuthorityUtil.convertRoles(authorities);
-		//查询用户操作权限
-		OperationConstant operation = operationService.queryOperation(handleResult.getData(), menuId, type);
+		OperationConstant operation = operationUtil.queryUserOperation(menuId, type);
 		jsonResponse = new JsonResponse(HandleConstant.HANDLE_SUCCESS, operation);
 		return jsonResponse;
 	}
@@ -97,7 +88,7 @@ public class UserController {
 	@ResponseBody
 	public JqGrid<UserInfoDTO> queryUserInfoData(GridDataDTO dto) {
 		logger.info("=== queryUserInfoData start ===, dto:{}", dto);
-		HandleResult handleResult = judgeRequest(dto);
+		HandleResult handleResult = gridUtil.judgeRequest(dto);
 		if (HandleConstant.HANDLE_FAIL.equals(handleResult.getFlag())) {
 			logger.error("=== queryUserInfoData judgeRequest fail ===, message:{}", handleResult.getMessage());
 			return new JqGrid<>();
@@ -139,32 +130,6 @@ public class UserController {
 		}
 		logger.info("=== checkUserName success ===, result:{}", flag);
 		return jsonResponse;
-	}
-
-	/**
-	 * 校验入参
-	 *
-	 * @param dto 入参实体
-	 * @return HandleResult
-	 */
-	private HandleResult judgeRequest(GridDataDTO dto) {
-		HandleResult result;
-		if (null == dto) {
-			result = new HandleResult(JudgeConstant.JUDGE_FAIL, "params empty");
-			return result;
-		}
-		//校验page
-		if (null == dto.getPage()) {
-			result = new HandleResult(JudgeConstant.JUDGE_FAIL, "page is null");
-			return result;
-		}
-		//校验rows
-		if (null == dto.getRows()) {
-			result = new HandleResult(JudgeConstant.JUDGE_FAIL, "rows is null");
-			return result;
-		}
-		result = new HandleResult(JudgeConstant.JUDGE_SUCCESS);
-		return result;
 	}
 
 	/**
@@ -216,7 +181,6 @@ public class UserController {
 	@RequestMapping(value = "/user/operateUserData", method = RequestMethod.POST)
 	@ResponseBody
 	public JsonResponse operateData(UserInfoDTO dto) {
-		JsonResponse jsonResponse;
 		logger.info("=== operateData start ===, dto:{}", dto);
 		HandleResult handleResult = judgeRequest(dto);
 		if (HandleConstant.HANDLE_FAIL.equals(handleResult.getFlag())) {
