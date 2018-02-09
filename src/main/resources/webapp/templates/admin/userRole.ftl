@@ -30,7 +30,7 @@
 <div class="wrapper wrapper-content  animated fadeInRight">
 
     <div class="jqGrid_wrapper">
-        <table id="user_list"></table>
+        <table id="user_role_list"></table>
         <div id="pager_list"></div>
     </div>
 </div>

@@ -5,7 +5,7 @@ import cn.edu.njtech.manage.domain.UserInfo;
 import cn.edu.njtech.manage.dto.GridDataDTO;
 import cn.edu.njtech.manage.dto.UserInfoDTO;
 import cn.edu.njtech.manage.service.IUserService;
-import cn.edu.njtech.manage.util.GridSearchOperation;
+import cn.edu.njtech.manage.util.GridSqlUtil;
 import com.github.pagehelper.PageHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -38,11 +38,11 @@ public class UserInfoServiceImpl implements IUserService {
 		logger.info("=== queryUserInfoList start ===, dto:{}", dto);
 		Map<String, Object> condition = new HashMap<>(16);
 		if (null != dto.get_search() && Boolean.valueOf(dto.get_search())) {
-			String searchStr = createSearchSql(dto);
+			String searchStr = GridSqlUtil.createSearchSql(dto);
 			condition.put("searchStr", searchStr);
 		}
 		if (!StringUtils.isEmpty(dto.getSidx())) {
-			condition.put("orderStr", createOrderSql(dto.getSidx(), dto.getSord()));
+			condition.put("orderStr", GridSqlUtil.createOrderSql(dto.getSidx(), dto.getSord()));
 		}
 		//分页查询
 		PageHelper.startPage(dto.getPage(), dto.getRows());
@@ -55,29 +55,6 @@ public class UserInfoServiceImpl implements IUserService {
 		return result;
 	}
 
-	/**
-	 * 构建排序sql
-	 *
-	 * @param sidx 排序列
-	 * @param sord asc/desc
-	 * @return
-	 */
-	private String createOrderSql(String sidx, String sord) {
-		return "order by " + sidx + " " + sord;
-	}
-
-	/**
-	 * 构建搜索sql语句
-	 *
-	 * @param dto 入参
-	 * @return
-	 */
-	private String createSearchSql(GridDataDTO dto) {
-		StringBuilder searchBuilder = new StringBuilder();
-		searchBuilder.append(dto.getSearchField());
-		searchBuilder.append(GridSearchOperation.strToEnum(dto.getSearchOper()).getOperationStr(dto.getSearchString()));
-		return searchBuilder.toString();
-	}
 
 	@Override
 	public Integer queryUserInfoCount(GridDataDTO dto) {
@@ -85,7 +62,7 @@ public class UserInfoServiceImpl implements IUserService {
 
 		Map<String, Object> condition = new HashMap<>(16);
 		if (null != dto.get_search() && Boolean.valueOf(dto.get_search())) {
-			String searchStr = createSearchSql(dto);
+			String searchStr = GridSqlUtil.createSearchSql(dto);
 			condition.put("searchStr", searchStr);
 		}
 		if (logger.isDebugEnabled()) {
@@ -127,6 +104,14 @@ public class UserInfoServiceImpl implements IUserService {
 				break;
 		}
 		logger.info("=== operateUserInfo success ===");
+	}
+
+	@Override
+	public List<UserInfoDTO> queryUserInfo4Select() {
+		logger.info("=== queryUserInfo4Select start ===");
+		List<UserInfoDTO> result = userInfoMapper.queryUserInfo4Select();
+		logger.info("=== queryUserInfo4Select success ===");
+		return result;
 	}
 
 	/**

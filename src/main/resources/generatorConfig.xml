@@ -85,15 +85,15 @@
 		<!--enableInsert="true" enableSelectByExample="false" enableUpdateByExample="false"-->
 		<!--enableDeleteByExample="false" enableCountByExample="false">-->
 		<!--<property name="useActualColumnNames" value="false"/>-->
-		<!--<generatedKey column="ID" sqlStatement="MySql"/>-->
+		<!--&lt;!&ndash;<generatedKey column="ID" sqlStatement="MySql"/>&ndash;&gt;-->
 		<!--</table>-->
 
-		<table tableName="t_user_info" domainObjectName="UserInfoTest"
-			   enableInsert="false" enableSelectByExample="false" enableUpdateByExample="false"
-			   enableDeleteByExample="false" enableCountByExample="false">
-			<property name="useActualColumnNames" value="false"/>
-			<!--<generatedKey column="ID" sqlStatement="MySql"/>-->
-		</table>
+		<!--<table tableName="t_user_info" domainObjectName="UserInfoTest"-->
+			   <!--enableInsert="false" enableSelectByExample="false" enableUpdateByExample="false"-->
+			   <!--enableDeleteByExample="false" enableCountByExample="false">-->
+			<!--<property name="useActualColumnNames" value="false"/>-->
+			<!--&lt;!&ndash;<generatedKey column="ID" sqlStatement="MySql"/>&ndash;&gt;-->
+		<!--</table>-->
 
 	</context>
 </generatorConfiguration>

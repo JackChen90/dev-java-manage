@@ -40,7 +40,15 @@ public interface IUserService {
 
 	/**
 	 * 新增/编辑/删除数据操作
+	 *
 	 * @param dto
 	 */
 	void operateUserInfo(UserInfoDTO dto);
+
+	/**
+	 * 为select查询用户信息
+	 *
+	 * @return
+	 */
+	List<UserInfoDTO> queryUserInfo4Select();
 }

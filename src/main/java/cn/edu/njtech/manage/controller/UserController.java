@@ -191,4 +191,22 @@ public class UserController {
 		userService.operateUserInfo(dto);
 		return new JsonResponse(HandleConstant.HANDLE_SUCCESS);
 	}
+
+	/**
+	 * grid 数据接口
+	 *
+	 * @return
+	 */
+	@RequestMapping(value = "user/queryUser4Select")
+	@ResponseBody
+	public JsonResponse queryUser4Select() {
+		logger.info("=== queryUser4Select start ===");
+		JsonResponse jsonResponse;
+		//查询用户信息列表
+		List<UserInfoDTO> userInfo = userService.queryUserInfo4Select();
+		//初始化grid
+		logger.info("=== queryUser4Select success ===, userSize:{}", userInfo == null ? null : userInfo.size());
+		jsonResponse = new JsonResponse(HandleConstant.HANDLE_SUCCESS, userInfo);
+		return jsonResponse;
+	}
 }

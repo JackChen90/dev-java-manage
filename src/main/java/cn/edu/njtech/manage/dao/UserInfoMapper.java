@@ -64,4 +64,11 @@ public interface UserInfoMapper {
 	 * @return
 	 */
 	int countUserName(String userName);
+
+	/**
+	 * 为下拉框查询用户信息
+	 *
+	 * @return
+	 */
+	List<UserInfoDTO> queryUserInfo4Select();
 }

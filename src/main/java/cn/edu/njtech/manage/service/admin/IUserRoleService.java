@@ -13,7 +13,7 @@ import java.util.List;
 public interface IUserRoleService {
 
 	/**
-	 * 获取用户信息列表
+	 * 获取用户角色列表
 	 *
 	 * @param dto jqGrid 入参
 	 * @return
@@ -27,14 +27,6 @@ public interface IUserRoleService {
 	 * @return
 	 */
 	Integer queryUserRoleCount(GridDataDTO dto);
-
-	/**
-	 * 校验用户名是否存在
-	 *
-	 * @param userName 入参用户名
-	 * @return
-	 */
-	boolean checkUserName(String userName);
 
 	/**
 	 * 新增/编辑/删除数据操作

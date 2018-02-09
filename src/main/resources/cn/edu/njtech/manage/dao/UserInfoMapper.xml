@@ -63,6 +63,15 @@
 		FROM t_user_info
 		WHERE user_name = #{userName}
 	</select>
+
+	<!--为下拉框查询用户信息-->
+	<select id="queryUserInfo4Select" resultType="cn.edu.njtech.manage.dto.UserInfoDTO">
+		SELECT
+		id,
+		user_name as userName
+		FROM t_user_info
+	</select>
+
 	<!--根据id删除用户信息-->
 	<delete id="deleteById" parameterType="java.lang.Integer">
     delete from t_user_info

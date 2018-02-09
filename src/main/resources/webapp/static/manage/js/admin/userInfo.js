@@ -48,7 +48,6 @@ var user = {
     createUserGrid: function () {
         var url = user.contextPath + user.queryUrl;
         var height = $(".jqGrid_wrapper").height();
-        // $("#user_list").setGridHeight(height);
         $("#user_list").jqGrid({
             url: url,
             datatype: "json",
@@ -88,7 +87,7 @@ var user = {
                 formoptions: {label: '用户名<font color=\'red\'> *</font>'}
             }, {
                 name: "realName",
-                index: "realName",
+                index: "real_name",
                 editable: true,
                 width: 100,
                 editrules: {
@@ -120,7 +119,7 @@ var user = {
                 width: 120
             }, {
                 name: "createTime",
-                index: "createTime",
+                index: "create_time",
                 editable: false,
                 width: 100,
                 formatter: "date"
@@ -131,12 +130,12 @@ var user = {
                 // }
             }, {
                 name: "createUser",
-                index: "createUser",
+                index: "create_user",
                 editable: false,
                 width: 100
             }, {
                 name: "updateTime",
-                index: "updateTime",
+                index: "update_time",
                 editable: false,
                 width: 100,
                 formatter: "date",
@@ -147,12 +146,12 @@ var user = {
                 }
             }, {
                 name: "updateUser",
-                index: "updateUser",
+                index: "update_user",
                 editable: false,
                 width: 100
             }, {
                 name: "delFlag",
-                index: "delFlag",
+                index: "del_flag",
                 editable: false,
                 width: 60,
                 formatter: user.convertDel
@@ -176,7 +175,7 @@ var user = {
             {//edit option
                 reloadAfterSubmit: true,
                 beforeSubmit: function (postdata, formid) {
-                    return [true, ''];
+                    return user.checkUserName(postdata.userName);
                 }
             },
             {//add option
