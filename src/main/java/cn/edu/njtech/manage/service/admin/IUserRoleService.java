@@ -30,7 +30,17 @@ public interface IUserRoleService {
 
 	/**
 	 * 新增/编辑/删除数据操作
+	 *
 	 * @param dto
 	 */
-	void operateUserRole(UserRoleDTO dto);
+	void operateUserRoleInfo(UserRoleDTO dto);
+
+	/**
+	 * 校验该用户是否已配置此权限
+	 *
+	 * @param userId 用户id
+	 * @param roleId 角色id
+	 * @return
+	 */
+	boolean checkUserRole(Integer userId, Integer roleId);
 }

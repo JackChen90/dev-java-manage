@@ -5,6 +5,8 @@
  */
 var userRole = {
     contextPath: null,
+    //状态值，用户id column编辑时需要disabled
+    needDisable: true,
     //默认第一页
     pageNum: 1,
     //默认每页20条
@@ -19,6 +21,8 @@ var userRole = {
     queryUsersUrl: "/user/queryUser4Select",
     //查询角色信息
     queryRolesUrl: "/role/queryRole4Select",
+    //校验用户角色url
+    checkUserRoleUrl: "/userRole/checkUserRole",
     convertDel: function (cellvalue, options, rowObject) {
         var newCellValue = null;
         switch (cellvalue) {
@@ -47,7 +51,7 @@ var userRole = {
             //表格json数据
             jsonReader: {
                 repeatitems: false,
-                id: "user_id",
+                id: "id",
                 subgrid: {
                     repeatitems: false
                 }
@@ -62,13 +66,23 @@ var userRole = {
                 editoptions: {
                     dataUrl: userRole.contextPath + userRole.queryUsersUrl,
                     buildSelect: function (data) {
+                        // var field_id = this.id;
                         var data = typeof data === "string" ?
                             $.parseJSON(data) : data,
-                            s = "<select>";
+                            s = "<select disabled='disabled'>";
                         $.each(data.data, function () {
                             s += '<option value="' + this.id + '">' + this.userName +
                                 '</option>';
                         });
+                        //定时任务（其实应该也可以写回调方法），用户id 编辑时disable
+                        setTimeout(function () {
+                            if (userRole.needDisable) {
+                                // $('#tr_' + field_id).attr('disabled', 'disabled');
+                                $('#userId').attr('disabled', 'disabled');
+                            } else {
+                                $('#userId').removeAttr('disabled');
+                            }
+                        }, 50);
                         return s + "</select>";
                     }
                 },
@@ -94,6 +108,21 @@ var userRole = {
                     required: true,
                     edithidden: true
                 },
+                edittype: "select",
+                editoptions: {
+                    dataUrl: userRole.contextPath + userRole.queryRolesUrl,
+                    buildSelect: function (data) {
+                        // var field_id = this.id;
+                        var data = typeof data === "string" ?
+                            $.parseJSON(data) : data,
+                            s = "<select disabled='disabled'>";
+                        $.each(data.data, function () {
+                            s += '<option value="' + this.id + '">' + this.roleName +
+                                '</option>';
+                        });
+                        return s + "</select>";
+                    }
+                },
                 formoptions: {label: '角色名称<font color=\'red\'> *</font>'}
             }, {
                 name: "roleName",
@@ -104,7 +133,7 @@ var userRole = {
                 name: "description",
                 index: "ur.description",
                 editable: false,
-                width: 120
+                width: 180
             }, {
                 name: "createTime",
                 index: "ur.create_time",
@@ -132,6 +161,7 @@ var userRole = {
                 index: "ri.del_flag",
                 editable: false,
                 width: 60,
+                search: false,
                 formatter: userRole.convertDel
             }],
             pager: "#pager_list",
@@ -156,21 +186,48 @@ var userRole = {
         var operationUrl = userRole.contextPath + userRole.operationUrl + "?menuId=" + menuId + "&type=" + type;
         ajaxPostJson(operationUrl, true, {menuId: menuId, type: type}, userRole.naviConfig);
     },
+    checkUserRoleCallback: function (data) {
+        if (data) {
+            return [true, ''];
+        } else {
+            return [false, '已为该用户配置了此权限'];
+        }
+    },
+    checkUserRole: function (userId, roleId) {
+        if (!userId || !roleId) {
+            return;
+        }
+        //调用校验用户角色服务
+        return ajaxPostJson(
+            userRole.contextPath + userRole.checkUserRoleUrl + "?userId=" + userId + "&roleId=" + roleId,
+            false,
+            null, userRole.checkUserRoleCallback);
+    },
     naviConfig: function (data) {
         $("#user_role_list").jqGrid("navGrid", "#pager_list", data,
             {//edit option
+                recreateForm: true,
                 reloadAfterSubmit: true,
+                closeAfterEdit: true,
                 beforeSubmit: function (postdata, formid) {
-                    return [true, ''];
+                    //校验用户角色
+                    return userRole.checkUserRole(postdata.userId, postdata.roleId);
                 },
-                beforeShowForm: function(formid) {
-                    $('#userId',formid).attr('readonly','readonly');
+                beforeShowForm: function (formid) {
+                    //编辑时，userId column需要disable
+                    // $('#userId',formid).attr('readonly','readonly');
+                    userRole.needDisable = true;
                 }
             },
             {//add option
                 reloadAfterSubmit: true,
+                closeAfterAdd: true,
                 beforeSubmit: function (postdata, formid) {
-                    return [true, ''];
+                    return userRole.checkUserRole(postdata.userId, postdata.roleId);
+                },
+                beforeShowForm: function (formid) {
+                    //新增时，userId column不需要disable
+                    userRole.needDisable = false;
                 }
             },
             {},

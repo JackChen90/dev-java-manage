@@ -19,9 +19,9 @@
 
 		<!--连接信息-->
 		<jdbcConnection driverClass="com.mysql.jdbc.Driver"
-						connectionURL="jdbc:mysql://172.19.216.49:3306/manage?useUnicode=true&amp;characterEncoding=utf8"
-						userId="keycloak"
-						password="admin">
+						connectionURL="jdbc:mysql://192.168.179.128:3306/manage?useUnicode=true&amp;characterEncoding=utf8"
+						userId="root"
+						password="123456">
 		</jdbcConnection>
 
 		<javaTypeResolver>
@@ -81,12 +81,12 @@
 		<!--<generatedKey column="ID" sqlStatement="MySql"/>-->
 		<!--</table>-->
 
-		<!--<table tableName="t_user_role" domainObjectName="UserRole"-->
-		<!--enableInsert="true" enableSelectByExample="false" enableUpdateByExample="false"-->
-		<!--enableDeleteByExample="false" enableCountByExample="false">-->
-		<!--<property name="useActualColumnNames" value="false"/>-->
-		<!--&lt;!&ndash;<generatedKey column="ID" sqlStatement="MySql"/>&ndash;&gt;-->
-		<!--</table>-->
+		<table tableName="t_user_role" domainObjectName="UserRoleTest"
+		enableInsert="true" enableSelectByExample="false" enableUpdateByExample="false"
+		enableDeleteByExample="false" enableCountByExample="false">
+		<property name="useActualColumnNames" value="false"/>
+		<generatedKey column="ID" sqlStatement="MySql"/>
+		</table>
 
 		<!--<table tableName="t_user_info" domainObjectName="UserInfoTest"-->
 			   <!--enableInsert="false" enableSelectByExample="false" enableUpdateByExample="false"-->

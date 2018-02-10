@@ -2,7 +2,7 @@ package cn.edu.njtech.manage.domain;
 
 import java.util.Date;
 
-public class UserRole {
+public class UserRoleTest {
     private Integer id;
 
     private Integer userId;

@@ -1,5 +1,6 @@
 package cn.edu.njtech.manage.dto;
 
+import cn.edu.njtech.manage.domain.UserRole;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.util.Date;
@@ -10,6 +11,15 @@ import java.util.Date;
  * @description UserRoleDTO
  */
 public class UserRoleDTO {
+	/**
+	 * 操作类型 add/edit/del
+	 */
+	private String oper;
+
+	/**
+	 * 主键id
+	 */
+	private String id;
 
 	/**
 	 * 用户id
@@ -65,6 +75,14 @@ public class UserRoleDTO {
 	 * 角色描述
 	 */
 	private String description;
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
 
 	public String getDelFlag() {
 		return delFlag;
@@ -156,10 +174,19 @@ public class UserRoleDTO {
 		this.description = description;
 	}
 
+	public String getOper() {
+		return oper;
+	}
+
+	public void setOper(String oper) {
+		this.oper = oper;
+	}
+
 	@Override
 	public String toString() {
 		return "UserRoleDTO{" +
-				"userId=" + userId +
+				"id=" + id +
+				", userId=" + userId +
 				", userName='" + userName + '\'' +
 				", realName='" + realName + '\'' +
 				", roleId=" + roleId +
@@ -171,5 +198,22 @@ public class UserRoleDTO {
 				", delFlag='" + delFlag + '\'' +
 				", description='" + description + '\'' +
 				'}';
+	}
+
+	/**
+	 * DTO to Entity
+	 * @param dto dto
+	 * @return
+	 */
+	public static UserRole toEntity(UserRoleDTO dto) {
+		UserRole userRole = new UserRole();
+		userRole.setId(dto.getId() == null ? null : Integer.valueOf(dto.getId()));
+		userRole.setUserId(dto.getUserId());
+		userRole.setRoleId(dto.getRoleId());
+		userRole.setCreateTime(dto.getCreateTime());
+		userRole.setCreateUser(dto.getCreateUser());
+		userRole.setUpdateTime(dto.getUpdateTime());
+		userRole.setUpdateUser(dto.getUpdateUser());
+		return userRole;
 	}
 }

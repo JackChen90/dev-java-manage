@@ -2,6 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.edu.njtech.manage.dao.UserRoleMapper">
 	<resultMap id="userRoleDTO" type="cn.edu.njtech.manage.dto.UserRoleDTO">
+		<id column="id" jdbcType="INTEGER" property="id"/>
 		<result column="user_id" jdbcType="INTEGER" property="userId"/>
 		<result column="user_name" jdbcType="VARCHAR" property="userName"/>
 		<result column="real_name" jdbcType="VARCHAR" property="realName"/>
@@ -24,10 +25,43 @@
       )
   </insert>
 
+	<!--更新用户角色信息-->
+	<update id="updateUserRole" parameterType="cn.edu.njtech.manage.domain.UserRole">
+		update t_user_role
+		<set>
+			<if test="userId != null">
+				user_id = ${userId},
+			</if>
+			<if test="roleId != null">
+				role_id = ${roleId},
+			</if>
+			<if test="createTime != null">
+				create_time = ${createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				create_user = ${createUser},
+			</if>
+			<if test="updateTime != null">
+				update_time = ${updateTime},
+			</if>
+			<if test="updateUser != null">
+				update_user = ${updateUser},
+			</if>
+		</set>
+		WHERE
+		id = ${id}
+	</update>
+
+	<!--根据id删除用户角色-->
+	<delete id="deleteById" parameterType="java.lang.Integer">
+    delete from t_user_role
+    where id = #{id,jdbcType=INTEGER}
+	</delete>
 
 	<!--获取用户角色信息-->
 	<select id="queryUserRole" parameterType="map" resultMap="userRoleDTO">
 		SELECT
+		ur.id,
 		ur.user_id,
 		user_name,
 		real_name,
@@ -52,7 +86,7 @@
 				${orderStr}
 			</when>
 			<otherwise>
-				ORDER BY ur.user_id, ur.role_id
+				ORDER BY ur.id
 			</otherwise>
 		</choose>
 	</select>
@@ -71,7 +105,19 @@
 		</trim>
 	</select>
 
-	<insert id="insertSelective" parameterType="cn.edu.njtech.manage.domain.UserRole">
+	<!--根据用户id、角色id获取记录数-->
+	<select id="countUserRole" resultType="java.lang.Integer">
+		SELECT
+		COUNT(1)
+		FROM t_user_role ur
+		WHERE
+		ur.user_id = ${userId}
+		and
+		ur.role_id = ${roleId}
+	</select>
+
+	<!--新增用户角色信息-->
+	<insert id="insertUserRole" parameterType="cn.edu.njtech.manage.domain.UserRole">
 		insert into t_user_role
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="userId != null">
