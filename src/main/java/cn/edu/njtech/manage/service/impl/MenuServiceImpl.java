@@ -2,9 +2,10 @@ package cn.edu.njtech.manage.service.impl;
 
 import cn.edu.njtech.manage.constant.RedisConstant;
 import cn.edu.njtech.manage.dao.MenuInfoMapper;
-import cn.edu.njtech.manage.domain.MenuInfo;
+import cn.edu.njtech.manage.dto.GridDataDTO;
 import cn.edu.njtech.manage.dto.MenuInfoDTO;
 import cn.edu.njtech.manage.service.IMenuService;
+import cn.edu.njtech.manage.util.GridSqlUtil;
 import cn.edu.njtech.manage.util.GsonUtil;
 import cn.edu.njtech.manage.util.RedisUtil;
 import com.google.gson.reflect.TypeToken;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Type;
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -44,7 +46,7 @@ public class MenuServiceImpl implements IMenuService {
 		logger.info("=== queryMenuList roleIds:{}, type:{} ===", roleIds, type);
 		//获取角色对应的菜单列表
 		List<MenuInfoDTO> menus = this.queryMenus(roleIds, type);
-		//调整结果顺序，调整数据为树形结构（子节点在父节点下面）
+		//调整结果顺序，调整数据为树形结构（子节点在父节点children节点中）
 		menus = sortMenus(menus);
 		logger.info("=== queryMenuList success ===, menus size:{}", menus == null ? null : menus.size());
 		return menus;
@@ -80,6 +82,126 @@ public class MenuServiceImpl implements IMenuService {
 		return menus;
 	}
 
+	@Override
+	public Integer queryMenuInfoCount(GridDataDTO dto) {
+		logger.info("=== queryMenuInfoCount start ===, dto:{}", dto);
+
+		Map<String, Object> condition = new HashMap<>(16);
+		if (null != dto.get_search() && Boolean.valueOf(dto.get_search())) {
+			String searchStr = GridSqlUtil.createSearchSql(dto);
+			condition.put("searchStr", searchStr);
+		}
+		int type = 1;
+		condition.put("menuType", type);
+		if (logger.isDebugEnabled()) {
+			logger.debug("=== queryMenuInfoCount condition ===, condition:{}", condition);
+		}
+		Integer count = menuInfoMapper.queryMenuInfoCount(condition);
+		logger.info("=== queryMenuInfoCount success ===, count:{}", count);
+		return count;
+	}
+
+	@Override
+	public List<MenuInfoDTO> queryMenuInfoList(GridDataDTO dto) {
+		logger.info("=== queryMenuInfoList start ===, dto:{}", dto);
+		Map<String, Object> condition = new HashMap<>(16);
+		if (null != dto.get_search() && Boolean.valueOf(dto.get_search())) {
+			String searchStr = GridSqlUtil.createSearchSql(dto);
+			condition.put("searchStr", searchStr);
+		}
+		if (!StringUtils.isEmpty(dto.getSidx())) {
+			condition.put("orderStr", GridSqlUtil.createOrderSql(dto.getSidx(), dto.getSord()));
+		}
+		int type = 1;
+		condition.put("type", type);
+		//treeGrid默认展开
+		condition.put("expanded", true);
+		//获取用户信息
+		List<MenuInfoDTO> result = menuInfoMapper.queryMenus(condition);
+		//调整结果顺序，调整数据为树形结构（子节点在父节点下面）
+		result = convertMenus(result);
+		logger.info("=== queryMenuInfoList success ===, result size:{}", result == null ? null : result.size());
+		return result;
+	}
+
+	/**
+	 * 调整结果顺序，调整数据为树形结构（子节点在父节点下面）
+	 *
+	 * @param menus db中查询出来的menu列表
+	 * @return
+	 */
+	private List<MenuInfoDTO> convertMenus(List<MenuInfoDTO> menus) {
+		List<MenuInfoDTO> result = new ArrayList<>();
+		final BigDecimal sortScore = new BigDecimal("0.1");
+		Map<Integer, BigDecimal> sortOrder = new HashMap<>();
+		//循环计算每个菜单的排序值（值越小，排序越靠前）。计算方法为：父节点排序值+节点排序值*0.1^节点层级数
+		for (MenuInfoDTO dto :
+				menus) {
+			if (sortOrder.get(dto.getId()) == null) {
+				if (dto.getParentId() == null || ROOT.equals(dto.getParentId())) {
+					sortOrder.put(dto.getId(), sortScore.multiply(new BigDecimal(dto.getSortOrder().toString())));
+				} else {
+					BigDecimal parentScore = sortOrder.get(dto.getParentId());
+//					int hierarchy = getHierarchy(parentScore);
+					int hierarchy = parentScore.scale() + 1;
+					sortOrder.put(dto.getId(),
+							sortScore.pow(hierarchy).multiply(new BigDecimal(dto.getSortOrder())).add(parentScore));
+				}
+			}
+		}
+		//根据value排序map
+		List<Map.Entry<Integer, BigDecimal>> mapList = sortMap(sortOrder);
+		//排序最终的menu（子节点在父节点下面）
+		result = sortResult(mapList, menus);
+		return result;
+	}
+
+	/**
+	 * 排序最终的menu（子节点在父节点下面）
+	 *
+	 * @param sortOrder 根据value排序过的map（key为menuId，value为排序值）
+	 * @param menus     db中查出来的menu列表
+	 * @return
+	 */
+	private List<MenuInfoDTO> sortResult(List<Map.Entry<Integer, BigDecimal>> sortOrder, List<MenuInfoDTO> menus) {
+		List<MenuInfoDTO> result = new ArrayList<>();
+		for (Map.Entry<Integer, BigDecimal> key :
+				sortOrder) {
+			for (MenuInfoDTO menu : menus) {
+				if (key.getKey().equals(menu.getId())) {
+					result.add(menu);
+					break;
+				}
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * 排序map
+	 *
+	 * @param sortOrder 各menuId与排序值的map
+	 * @return
+	 */
+	private List<Map.Entry<Integer, BigDecimal>> sortMap(Map<Integer, BigDecimal> sortOrder) {
+		List<Map.Entry<Integer, BigDecimal>> tempList = new ArrayList<>(sortOrder.entrySet());
+		Collections.sort(tempList, Comparator.comparing(Map.Entry::getValue));
+		return tempList;
+	}
+
+	/**
+	 * 根据父节点排序值获取层级
+	 * 例：父节点排序的值为0.124，"."后有3位，即返回层级3+1(自身处于第4级)
+	 *
+	 * @param parentScore
+	 * @return
+	 */
+	private int getHierarchy(Float parentScore) {
+		String scoreStr = parentScore.toString();
+		//所有层级值钧小于1而大于等于0.1
+		return scoreStr.length() - 1;
+	}
+
 	/**
 	 * 调整结果顺序，调整数据为树形结构（子节点在父节点下面）
 	 *
@@ -93,7 +215,7 @@ public class MenuServiceImpl implements IMenuService {
 		for (MenuInfoDTO dto :
 				menus) {
 			//为根节点
-			if (dto.getParentId().equals(ROOT)) {
+			if (ROOT.equals(dto.getParentId())) {
 				//入结果list
 				result.add(dto);
 				//加入关系map
@@ -153,6 +275,7 @@ public class MenuServiceImpl implements IMenuService {
 					//递归增加child
 					add(list, child, parents, index);
 				}
+				break;
 			}
 		}
 	}
@@ -180,7 +303,7 @@ public class MenuServiceImpl implements IMenuService {
 	 */
 	private void addParent(List<Integer> parents, Map<Integer, Integer> relation,
 						   Integer parentId) {
-		if (!parentId.equals(ROOT)) {
+		if (!ROOT.equals(parentId)) {
 			//sql查出来是按照层级正序排列，父节点一定在relation中
 			Integer tempParent = relation.get(parentId);
 			if (null != tempParent) {

@@ -1,5 +1,7 @@
 package cn.edu.njtech.manage.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.util.Date;
 import java.util.List;
 
@@ -19,9 +21,13 @@ public class MenuInfoDTO {
 
 	private String menuType;
 
+	private Boolean menuLeaf;
+
 	private Long sortOrder;
 
 	private String url;
+
+	private String menuIcon;
 
 	private Integer operation;
 
@@ -37,6 +43,8 @@ public class MenuInfoDTO {
 
 	private String delFlag;
 
+	private Boolean expanded;
+
 	private String description;
 
 	private List<MenuInfoDTO> children;
@@ -49,8 +57,10 @@ public class MenuInfoDTO {
 				", menuLevel=" + menuLevel +
 				", menuName='" + menuName + '\'' +
 				", menuType='" + menuType + '\'' +
+				", menuLeaf='" + menuLeaf + '\'' +
 				", sortOrder=" + sortOrder +
 				", url='" + url + '\'' +
+				", menuIcon='" + menuIcon + '\'' +
 				", operation=" + operation +
 				", operationAll=" + operationAll +
 				", createTime=" + createTime +
@@ -58,6 +68,7 @@ public class MenuInfoDTO {
 				", updateTime=" + updateTime +
 				", updateUser='" + updateUser + '\'' +
 				", delFlag='" + delFlag + '\'' +
+				", expanded='" + expanded + '\'' +
 				", description='" + description + '\'' +
 				'}';
 	}
@@ -68,6 +79,14 @@ public class MenuInfoDTO {
 
 	public void setId(Integer id) {
 		this.id = id;
+	}
+
+	public String getMenuIcon() {
+		return menuIcon;
+	}
+
+	public void setMenuIcon(String menuIcon) {
+		this.menuIcon = menuIcon;
 	}
 
 	public Integer getParentId() {
@@ -102,6 +121,14 @@ public class MenuInfoDTO {
 		this.menuType = menuType;
 	}
 
+	public Boolean getMenuLeaf() {
+		return menuLeaf;
+	}
+
+	public void setMenuLeaf(Boolean menuLeaf) {
+		this.menuLeaf = menuLeaf;
+	}
+
 	public Long getSortOrder() {
 		return sortOrder;
 	}
@@ -134,6 +161,7 @@ public class MenuInfoDTO {
 		this.operationAll = operationAll;
 	}
 
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
 	public Date getCreateTime() {
 		return createTime;
 	}
@@ -150,6 +178,7 @@ public class MenuInfoDTO {
 		this.createUser = createUser;
 	}
 
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
 	public Date getUpdateTime() {
 		return updateTime;
 	}
@@ -172,6 +201,14 @@ public class MenuInfoDTO {
 
 	public void setDelFlag(String delFlag) {
 		this.delFlag = delFlag;
+	}
+
+	public Boolean getExpanded() {
+		return expanded;
+	}
+
+	public void setExpanded(Boolean expanded) {
+		this.expanded = expanded;
 	}
 
 	public String getDescription() {

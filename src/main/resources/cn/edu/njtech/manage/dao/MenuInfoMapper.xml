@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.edu.njtech.manage.dao.MenuInfoMapper">
-	<resultMap id="BaseResultMap" type="cn.edu.njtech.manage.dto.MenuInfoDTO">
+	<resultMap id="MenuInfoDTO" type="cn.edu.njtech.manage.dto.MenuInfoDTO">
 		<id column="id" jdbcType="INTEGER" property="id"/>
 		<result column="parent_id" jdbcType="INTEGER" property="parentId"/>
 		<result column="menu_level" jdbcType="DECIMAL" property="menuLevel"/>
 		<result column="menu_name" jdbcType="VARCHAR" property="menuName"/>
 		<result column="menu_type" jdbcType="CHAR" property="menuType"/>
+		<result column="menu_leaf" jdbcType="BOOLEAN" property="menuLeaf"/>
 		<result column="sort_order" jdbcType="DECIMAL" property="sortOrder"/>
 		<result column="url" jdbcType="VARCHAR" property="url"/>
+		<result column="icon" jdbcType="VARCHAR" property="menuIcon"/>
 		<result column="operation" jdbcType="INTEGER" property="operation"/>
 		<result column="operation_all" jdbcType="INTEGER" property="operationAll"/>
 		<result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
@@ -16,6 +18,7 @@
 		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
 		<result column="update_user" jdbcType="VARCHAR" property="updateUser"/>
 		<result column="del_flag" jdbcType="CHAR" property="delFlag"/>
+		<result column="expanded" jdbcType="BOOLEAN" property="expanded"/>
 		<result column="description" jdbcType="VARCHAR" property="description"/>
 	</resultMap>
 	<sql id="Base_Column_List">
@@ -24,7 +27,7 @@
   </sql>
 
 	<!--获取角色对应菜单列表-->
-	<select id="queryMenuByRoleId" resultMap="BaseResultMap">
+	<select id="queryMenuByRoleId" resultMap="MenuInfoDTO">
 		SELECT
 		id,
 		parent_id,
@@ -50,7 +53,7 @@
 	</select>
 
 	<!--获取菜单列表-->
-	<select id="queryMenuList" resultMap="BaseResultMap">
+	<select id="queryMenuList" resultMap="MenuInfoDTO">
 		SELECT
 		id,
 		parent_id,
@@ -59,6 +62,7 @@
 		menu_type,
 		sort_order,
 		url,
+		icon,
 		operation,
 		operation_all,
 		description
@@ -76,6 +80,64 @@
 		AND mi.menu_type = #{menuType,jdbcType=INTEGER}
 		AND mi.del_flag = 0
 		ORDER BY menu_level ,parent_id, sort_order
+	</select>
+
+	<!--获取所有菜单信息-->
+	<select id="queryMenus" resultMap="MenuInfoDTO">
+		SELECT
+		id,
+		parent_id,
+		menu_level -1 as menu_level,
+		menu_name,
+		menu_type,
+		CASE WHEN url is NULL THEN false
+		WHEN url ='' THEN false
+		ELSE true END as menu_leaf,
+		sort_order,
+		url,
+		icon,
+		operation_all,
+		<choose>
+			<when test="expanded">
+				true AS expanded,
+			</when>
+			<otherwise>
+				false AS expanded,
+			</otherwise>
+		</choose>
+		create_time,
+		create_user,
+		update_time,
+		update_user,
+		description
+		FROM
+		t_menu_info mi
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="searchStr != null">
+				and ${searchStr}
+			</if>
+			and mi.menu_type = #{type,jdbcType=INTEGER}
+			AND mi.del_flag = 0
+		</trim>
+		<choose>
+			<when test="orderStr != null">
+				${orderStr}
+			</when>
+			<otherwise>
+				ORDER BY  mi.parent_id, mi.sort_order
+			</otherwise>
+		</choose>
+	</select>
+
+	<!--查询所有菜单数量-->
+	<select id="queryMenuInfoCount" resultType="java.lang.Integer">
+		SELECT
+		COUNT(1)
+		FROM
+		t_menu_info mi
+		WHERE
+		mi.menu_type = #{menuType,jdbcType=INTEGER}
+		AND mi.del_flag = 0
 	</select>
 
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">

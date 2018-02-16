@@ -10,7 +10,7 @@ $(function () {
 
 var menu = {
     //jqGrid查询数据
-    url: "menu/queryData",
+    url: "menu/queryMenuData",
     init: function () {
         ajaxPostJson(menu.url, false, {type: 1}, createMenu);
     }

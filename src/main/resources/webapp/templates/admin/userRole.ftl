@@ -23,6 +23,7 @@
 
         .jqGrid_wrapper {
             height: 100%;
+            background: white;
         }
     </style>
 </head>

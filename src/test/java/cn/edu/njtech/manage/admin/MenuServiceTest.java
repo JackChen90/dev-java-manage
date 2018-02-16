@@ -1,5 +1,7 @@
-package cn.edu.njtech.manage;
+package cn.edu.njtech.manage.admin;
 
+import cn.edu.njtech.manage.ManageApplication;
+import cn.edu.njtech.manage.dto.GridDataDTO;
 import cn.edu.njtech.manage.dto.MenuInfoDTO;
 import cn.edu.njtech.manage.service.IMenuService;
 import com.google.gson.Gson;
@@ -38,5 +40,11 @@ public class MenuServiceTest {
 		}.getType();
 		System.out.println(new Gson().toJson(result, t));
 		Assume.assumeNotNull(result);
+	}
+
+	@Test
+	public void queryOperationTest(){
+
+		List<MenuInfoDTO> result = menuService.queryMenuInfoList(new GridDataDTO());
 	}
 }

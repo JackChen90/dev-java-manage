@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 @Component("M_MenuInfo")
@@ -20,16 +21,17 @@ public interface MenuInfoMapper {
 	/**
 	 * 获取菜单列表
 	 *
-	 * @param roleId 角色id
+	 * @param roleId   角色id
 	 * @param menuType 菜单类型 0系统菜单 1后面管理菜单
 	 * @return
 	 */
 	List<MenuInfoDTO> queryMenuByRoleId(@Param("roleId") Integer roleId,
-									@Param("menuType") Integer menuType);
+										@Param("menuType") Integer menuType);
+
 	/**
 	 * 获取菜单列表
 	 *
-	 * @param roleIds 角色ids
+	 * @param roleIds  角色ids
 	 * @param menuType 菜单类型 0系统菜单 1后面管理菜单
 	 * @return
 	 */
@@ -39,4 +41,20 @@ public interface MenuInfoMapper {
 	int updateByPrimaryKeySelective(MenuInfo record);
 
 	int updateByPrimaryKey(MenuInfo record);
+
+	/**
+	 * 根据条件查询所有菜单
+	 *
+	 * @param condition
+	 * @return
+	 */
+	List<MenuInfoDTO> queryMenus(Map<String, Object> condition);
+
+	/**
+	 * 查询菜单信息数据量
+	 *
+	 * @param condition
+	 * @return
+	 */
+	Integer queryMenuInfoCount(Map<String, Object> condition);
 }
