@@ -5,6 +5,8 @@
  */
 var menu = {
     contextPath: null,
+    //所有操作权限
+    allOperation: null,
     //默认第一页
     pageNum: 1,
     //默认每页20条
@@ -16,12 +18,27 @@ var menu = {
     //新增/编辑/删除数据url
     editUrl: "/menu/operatemenuData",
     //校验用户名不重复
-    checkmenuNameUrl: "/menu/checkmenuName",
-    convertCategory: function (cellvalue) {
+    checkMenuNameUrl: "/menu/checkMenuName",
+    //操作字典url
+    operationMapUrl: "/operation/allOperation",
+    initAllOperation: function (data) {
+        menu.allOperation = data;
+    },
+    convertOperation: function (cellvalue) {
+        var result = '';
+        for (var i = 0; i < menu.allOperation.length; i++) {
+            //页面操作与操作表每个操作的id做与运算，为0则不具备该操作权限
+            if ((menu.allOperation[i].id & cellvalue) > 0) {
+                result += menu.allOperation[i].description + "/";
+            }
+        }
+        return result.substr(0, result.length - 1);
+    },
+    convertCategory: function (flag) {
         //true为叶节点
-        if(cellvalue){
+        if (flag) {
             return "<span class=\"label label-success\">菜单</span>";
-        }else {
+        } else {
             return "<span class=\"label label-primary\">目录</span>";
         }
     },
@@ -41,20 +58,20 @@ var menu = {
         }
         return newCellValue;
     },
-    checkmenuNameCallback: function (data) {
+    checkMenuNameCallback: function (data) {
         if (data) {
             return [true, ''];
         } else {
             return [false, '已存在相同用户名'];
         }
     },
-    checkmenuName: function (menuName) {
+    checkMenuName: function (menuName) {
         if (!menuName) {
             return;
         }
         //调用校验用户名服务
-        return ajaxPostJson(menu.contextPath + menu.checkmenuNameUrl + "?menuName=" + menuName, false,
-            null, menu.checkmenuNameCallback);
+        return ajaxPostJson(menu.contextPath + menu.checkMenuNameUrl + "?menuName=" + menuName, false,
+            null, menu.checkMenuNameCallback);
     },
     createMenuGrid: function () {
         var url = menu.contextPath + menu.queryUrl;
@@ -64,7 +81,8 @@ var menu = {
             mtype: "POST",
             datatype: "json",
             height: height - 116,
-            autowidth: true,
+            shrinkToFit: false,
+            // forceFit: true,
             //表格json数据
             jsonReader: {
                 repeatitems: false,
@@ -88,12 +106,12 @@ var menu = {
                 name: "menuName",
                 index: "menu_name",
                 editable: true,
-                width: 120,
+                width: 140,
                 editrules: {
                     required: true
                     // custom: true,
                     // custom_func: function (param) {
-                    //     return menu.checkmenuName(param)
+                    //     return menu.checkMenuName(param)
                     // }
                 },
                 formoptions: {label: '菜单名称<font color=\'red\'> *</font>'}
@@ -119,7 +137,7 @@ var menu = {
                 index: "menu_leaf",
                 editable: true,
                 sortable: false,
-                width: 50,
+                width: 60,
                 editrules: {
                     required: true
                 },
@@ -134,7 +152,8 @@ var menu = {
                 name: "operationAll",
                 index: "operation_all",
                 editable: true,
-                width: 80
+                width: 180,
+                formatter: menu.convertOperation
             }, {
                 name: "createTime",
                 index: "create_time",
@@ -169,8 +188,10 @@ var menu = {
                 width: 60,
                 formatter: menu.convertDel
             }, {
-                "name": "parentId",
-                "hidden": true
+                name: "parentId",
+                index: "parentId",
+                hidden: true,
+                width: 150
             }],
             pager: "#pager_list",
             sortname: 'id',
@@ -192,24 +213,31 @@ var menu = {
         });
     },
     init: function (menuId, type) {
+        //查询所有操作列表
+        var operationMapUrl = menu.contextPath + menu.operationMapUrl;
+        ajaxPostJson(operationMapUrl, false, null, menu.initAllOperation);
         //初始化数据
         menu.createMenuGrid();
+
         //初始化操作数据
         var operationUrl = menu.contextPath + menu.operationUrl + "?menuId=" + menuId + "&type=" + type;
         ajaxPostJson(operationUrl, true, {menuId: menuId, type: type}, menu.naviConfig);
+
+        //初始化gird width，使得水平滚动条能显示
+        menu.gridResizeWidth();
     },
     naviConfig: function (data) {
         $("#menu_info_list").jqGrid("navGrid", "#pager_list", data,
             {//edit option
                 reloadAfterSubmit: true,
                 // beforeSubmit: function (postdata, formid) {
-                //     return menu.checkmenuName(postdata.menuName);
+                //     return menu.checkMenuName(postdata.menuName);
                 // }
             },
             {//add option
                 reloadAfterSubmit: true,
                 // beforeSubmit: function (postdata, formid) {
-                //     return menu.checkmenuName(postdata.menuName);
+                //     return menu.checkMenuName(postdata.menuName);
                 // }
             },
             {},
@@ -224,5 +252,11 @@ var menu = {
             var height = _jqGrid_wrapper.height();
             _menu_list.setGridHeight(height - 116);
         })
+    },
+    gridResizeWidth: function () {
+        var _jqGrid_wrapper = $(".jqGrid_wrapper");
+        var _menu_list = $("#menu_info_list");
+        var width = _jqGrid_wrapper.width();
+        _menu_list.setGridWidth(width);
     }
 };

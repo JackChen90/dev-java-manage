@@ -167,7 +167,9 @@ div.tablediv > .table-bordered {
 	position: relative;
 	margin: 0;
 	padding:0;
-	overflow-x:hidden;
+	/*overflow-x:hidden;*/
+	overflow-x:visible;
+	overflow-y:auto;
 	text-align:left;
 }
 .ui-jqgrid .ui-jqgrid-btable {
