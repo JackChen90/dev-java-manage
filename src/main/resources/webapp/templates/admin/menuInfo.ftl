@@ -6,17 +6,15 @@
     <title>管理-菜单信息管理</title>
     <meta name="keywords" content="菜单信息管理">
     <meta name="description" content="菜单信息管理">
-    <#--<link rel="shortcut icon" href="favicon.ico">-->
+<#--<link rel="shortcut icon" href="favicon.ico">-->
     <link href="${request.contextPath}/webapp/static/css/bootstrap.min14ed.css?v=3.3.6" rel="stylesheet">
-    <link href="${request.contextPath}/webapp/static/css/font-awesome.min93e3.css?v=4.4.0" rel="stylesheet">
 
     <!-- jqgrid-->
-    <link href="${request.contextPath}/webapp/static/css/plugins/jqgrid/ui.jqgrid-bootstrap.css?0820" rel="stylesheet">
+    <link href="${request.contextPath}/webapp/static/css/plugins/jqgrid/ui.jqgridffe4.css?0820" rel="stylesheet">
     <link href="${request.contextPath}/webapp/static/css/animate.min.css" rel="stylesheet">
     <link href="${request.contextPath}/webapp/static/css/style.min862f.css?v=4.1.0" rel="stylesheet">
     <link href="${request.contextPath}/webapp/static/css/plugins/jqgrid/ui.jqgridffe4.css?0820" rel="stylesheet">
-<#--<link href="${request.contextPath}/webapp/static/css/plugins/datapicker/datepicker3.css" rel="stylesheet">-->
-
+    <link href="${request.contextPath}/webapp/static/css/plugins/jqgrid/ui.jqgridffe4.css?0820" rel="stylesheet">
     <style>
         .wrapper {
             height: 100%;
@@ -25,6 +23,16 @@
         .jqGrid_wrapper {
             height: 100%;
             background: white;
+        }
+
+        .fontDiv {
+            display: inline;
+        }
+
+        .fontInput {
+            margin-left: 3px;
+            padding: .5em .3em;
+            float: left;
         }
     </style>
 </head>
@@ -38,18 +46,20 @@
 </div>
 <script src="${request.contextPath}/webapp/static/js/jquery.min.js?v=2.1.4"></script>
 <script src="${request.contextPath}/webapp/static/manage/js/util/ajax.js"></script>
+<script src="${request.contextPath}/webapp/static/manage/js/icon.js"></script>
 <script src="${request.contextPath}/webapp/static/manage/js/admin/menuInfo.js"></script>
 <script src="${request.contextPath}/webapp/static/js/bootstrap.min.js?v=3.3.6"></script>
 <script src="${request.contextPath}/webapp/static/js/plugins/peity/jquery.peity.min.js"></script>
 <script src="${request.contextPath}/webapp/static/js/plugins/jqgrid/i18n/grid.locale-cnffe4.js?0820"></script>
 <script src="${request.contextPath}/webapp/static/js/plugins/jqgrid/jquery.jqGrid.minffe4.js?0820"></script>
+<script src="${request.contextPath}/webapp/static/js/plugins/layer/layer.min.js?0820"></script>
 <#--<script src="${request.contextPath}/webapp/static/js/plugins/datapicker/bootstrap-datepicker.js"></script>-->
 <script>
     var menuId = ${menuId};
     var type =${type};
     $(function () {
         $.jgrid.defaults.styleUI = "Bootstrap";
-        menu.contextPath = "${request.contextPath}";
+        menu.contextPath = icon.contextPath = "${request.contextPath}";
         menu.init(menuId, type);
         menu.resize();
     });

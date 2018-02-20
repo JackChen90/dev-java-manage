@@ -124,6 +124,29 @@ public class MenuServiceImpl implements IMenuService {
 		return result;
 	}
 
+	@Override
+	public List<MenuInfoDTO> queryParents() {
+		logger.info("=== queryParents start ===");
+		List<MenuInfoDTO> result = menuInfoMapper.queryParents();
+		MenuInfoDTO root = new MenuInfoDTO();
+		root.setId(ROOT);
+		root.setMenuName("根节点");
+		if (result == null) {
+			result = new ArrayList<>();
+		}
+		result.add(0, root);
+		logger.info("=== queryParents success ===, result size:{}", result.size());
+		return result;
+	}
+
+	@Override
+	public boolean checkMenuName(Integer parentId, String menuName) {
+		logger.info("=== checkMenuName start ===, parentId:{}, menuName:{}", parentId, menuName);
+		int count = menuInfoMapper.countMenu(parentId, menuName);
+		logger.info("=== checkMenuName success ===, count:{}", count);
+		return count > 0 ? false : true;
+	}
+
 	/**
 	 * 调整结果顺序，调整数据为树形结构（子节点在父节点下面）
 	 *

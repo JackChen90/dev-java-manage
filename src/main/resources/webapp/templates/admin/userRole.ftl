@@ -8,7 +8,7 @@
     <meta name="description" content="用户权限管理">
     <#--<link rel="shortcut icon" href="favicon.ico">-->
     <link href="${request.contextPath}/webapp/static/css/bootstrap.min14ed.css?v=3.3.6" rel="stylesheet">
-    <link href="${request.contextPath}/webapp/static/css/font-awesome.min93e3.css?v=4.4.0" rel="stylesheet">
+    <link href="${request.contextPath}/webapp/static/css/font-awesome.min.css?v=4.7.0" rel="stylesheet">
 
     <!-- jqgrid-->
     <link href="${request.contextPath}/webapp/static/css/plugins/jqgrid/ui.jqgridffe4.css?0820" rel="stylesheet">

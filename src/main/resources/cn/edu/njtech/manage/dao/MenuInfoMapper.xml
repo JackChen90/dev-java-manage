@@ -140,6 +140,25 @@
 		AND mi.del_flag = 0
 	</select>
 
+	<!--查询所有父节点-->
+	<select id="queryParents" resultMap="MenuInfoDTO">
+		SELECT
+		id,
+		menu_name
+		FROM t_menu_info mi
+		WHERE mi.parent_id = -1
+		ORDER BY mi.id
+	</select>
+
+	<!--校验同一级父节点下菜单名不相同-->
+	<select id="countMenu" resultType="java.lang.Integer">
+		select
+		count(*)
+		from t_menu_info mi
+		WHERE mi.parent_id = #{parentId}
+		AND mi.menuName = #{menuName}
+	</select>
+
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from t_menu_info
     where id = #{id,jdbcType=INTEGER}

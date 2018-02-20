@@ -11,10 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
@@ -129,4 +126,45 @@ public class MenuController {
 		return jsonResponse;
 	}
 
+	/**
+	 * 为菜单新增/编辑parentId下拉框提供数据
+	 * @return
+	 */
+	@RequestMapping(value = "queryParents4Select", method = RequestMethod.GET)
+	@ResponseBody
+	public JsonResponse queryParents4Select(){
+		logger.info("=== queryParents4Select start ===");
+		JsonResponse jsonResponse;
+
+		//查询所有的parentsId
+		List<MenuInfoDTO> roleInfo = menuService.queryParents();
+
+		logger.info("=== queryParents4Select success ===, parentsSize:{}", roleInfo == null ? null : roleInfo.size());
+		jsonResponse = new JsonResponse(HandleConstant.HANDLE_SUCCESS, roleInfo);
+		return jsonResponse;
+	}
+
+	/**
+	 * 校验菜单名不重复
+	 * @return
+	 */
+	@RequestMapping(value = "checkMenuName", method = RequestMethod.POST)
+	@ResponseBody
+	public JsonResponse checkMenuName(@RequestParam Integer parentId,
+									  @RequestParam String menuName){
+		logger.info("=== checkMenuName start ===");
+		JsonResponse jsonResponse;
+
+		//校验同一父节点下菜单名不重复
+		boolean flag = menuService.checkMenuName(parentId,menuName);
+		if (flag) {
+			jsonResponse = new JsonResponse(HandleConstant.HANDLE_SUCCESS, true);
+		} else {
+			jsonResponse = new JsonResponse(HandleConstant.HANDLE_SUCCESS,
+					null, "该父节点下已存在同名菜单", false);
+		}
+		logger.info("=== checkMenuName success ===, result:{}", flag);
+		jsonResponse = new JsonResponse(HandleConstant.HANDLE_SUCCESS, flag);
+		return jsonResponse;
+	}
 }

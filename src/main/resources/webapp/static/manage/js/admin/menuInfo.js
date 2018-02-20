@@ -13,14 +13,16 @@ var menu = {
     pageSize: 20,
     //操作权限数据url
     operationUrl: "/menu/operationData",
-    //用户信息数据url
+    //菜单信息数据url
     queryUrl: "/menu/queryData",
     //新增/编辑/删除数据url
-    editUrl: "/menu/operatemenuData",
+    editUrl: "/menu/operateMenuData",
     //校验用户名不重复
     checkMenuNameUrl: "/menu/checkMenuName",
     //操作字典url
     operationMapUrl: "/operation/allOperation",
+    //查询所有父节点信息
+    queryParentsUrl: "/menu/queryParents4Select",
     initAllOperation: function (data) {
         menu.allOperation = data;
     },
@@ -62,15 +64,20 @@ var menu = {
         if (data) {
             return [true, ''];
         } else {
-            return [false, '已存在相同用户名'];
+            return [false, '该父节点下已存在同名菜单'];
         }
     },
-    checkMenuName: function (menuName) {
+    checkMenuName: function (parentId, menuName) {
+        if (!parentId) {
+            parentId = -1;
+        }
         if (!menuName) {
             return;
         }
         //调用校验用户名服务
-        return ajaxPostJson(menu.contextPath + menu.checkMenuNameUrl + "?menuName=" + menuName, false,
+        return ajaxPostJson(menu.contextPath + menu.checkMenuNameUrl
+            + "?menuName=" + menuName + "&parentId=" + parentId,
+            false,
             null, menu.checkMenuNameCallback);
     },
     createMenuGrid: function () {
@@ -103,16 +110,46 @@ var menu = {
                 editable: false,
                 hidden: true
             }, {
+                name: "parentId",
+                index: "parentId",
+                hidden: true,
+                width: 150,
+                formoptions: {label: '父节点<font color=\'red\'> *</font>'},
+                editable: true,
+                edittype: "select",
+                editrules: {
+                    required: true,
+                    edithidden: true
+                },
+                editoptions: {
+                    dataUrl: menu.contextPath + menu.queryParentsUrl,
+                    buildSelect: function (data) {
+                        var data = typeof data === "string" ?
+                            $.parseJSON(data) : data,
+                            s = "<select disabled='disabled'>";
+                        $.each(data.data, function () {
+                            s += '<option value="' + this.id + '">' + this.menuName +
+                                '</option>';
+                        });
+                        // //定时任务（其实应该也可以写回调方法），用户id 编辑时disable
+                        // setTimeout(function () {
+                        //     if (userRole.needDisable) {
+                        //         // $('#tr_' + field_id).attr('disabled', 'disabled');
+                        //         $('#userId').attr('disabled', 'disabled');
+                        //     } else {
+                        //         $('#userId').removeAttr('disabled');
+                        //     }
+                        // }, 50);
+                        return s + "</select>";
+                    }
+                }
+            }, {
                 name: "menuName",
                 index: "menu_name",
                 editable: true,
                 width: 140,
                 editrules: {
                     required: true
-                    // custom: true,
-                    // custom_func: function (param) {
-                    //     return menu.checkMenuName(param)
-                    // }
                 },
                 formoptions: {label: '菜单名称<font color=\'red\'> *</font>'}
             }, {
@@ -122,8 +159,13 @@ var menu = {
                 align: "center",
                 width: 40,
                 formatter: menu.convertIcon,
+                edittype: "custom",
                 editrules: {
                     required: true
+                },
+                editoptions: {
+                    custom_element: icon.element,
+                    custom_value: icon.value
                 },
                 formoptions: {label: '图标<font color=\'red\'> *</font>'}
             }, {
@@ -187,11 +229,6 @@ var menu = {
                 editable: false,
                 width: 60,
                 formatter: menu.convertDel
-            }, {
-                name: "parentId",
-                index: "parentId",
-                hidden: true,
-                width: 150
             }],
             pager: "#pager_list",
             sortname: 'id',
@@ -230,15 +267,15 @@ var menu = {
         $("#menu_info_list").jqGrid("navGrid", "#pager_list", data,
             {//edit option
                 reloadAfterSubmit: true,
-                // beforeSubmit: function (postdata, formid) {
-                //     return menu.checkMenuName(postdata.menuName);
-                // }
+                beforeSubmit: function (postdata, formid) {
+                    return menu.checkMenuName(postdata.parentId, postdata.menuName);
+                }
             },
             {//add option
                 reloadAfterSubmit: true,
-                // beforeSubmit: function (postdata, formid) {
-                //     return menu.checkMenuName(postdata.menuName);
-                // }
+                beforeSubmit: function (postdata, formid) {
+                    return menu.checkMenuName(postdata.parentId, postdata.menuName);
+                }
             },
             {},
             {sopt: ['eq', 'ne', 'cn', 'nc']});

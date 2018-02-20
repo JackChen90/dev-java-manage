@@ -57,4 +57,21 @@ public interface MenuInfoMapper {
 	 * @return
 	 */
 	Integer queryMenuInfoCount(Map<String, Object> condition);
+
+	/**
+	 * 查询所有父节点
+	 *
+	 * @return
+	 */
+	List<MenuInfoDTO> queryParents();
+
+	/**
+	 * 校验同一级父节点下菜单名不相同
+	 *
+	 * @param parentId 父节点id
+	 * @param menuName 菜单名称
+	 * @return
+	 */
+	int countMenu(@Param("parentId") Integer parentId,
+				  @Param("menuName") String menuName);
 }

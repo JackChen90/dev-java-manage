@@ -46,4 +46,20 @@ public interface IMenuService {
 	 * @return
 	 */
 	List<MenuInfoDTO> queryMenuInfoList(GridDataDTO dto);
+
+	/**
+	 * 查询所有父节点列表
+	 *
+	 * @return
+	 */
+	List<MenuInfoDTO> queryParents();
+
+	/**
+	 * 校验同一级父节点下菜单名不相同
+	 *
+	 * @param parentId 父节点id
+	 * @param menuName 菜单名称
+	 * @return
+	 */
+	boolean checkMenuName(Integer parentId, String menuName);
 }
