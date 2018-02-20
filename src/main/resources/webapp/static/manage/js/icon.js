@@ -40,13 +40,13 @@ var icon = {
         return $(elemStr)[0];
     },
     value: function (elem, operation, value) {
-        if (!$('input', $(elem)[0])[0]) {
+        if (!$('input', $(elem)[0]).eq(0)) {
             return '';
         }
         if (operation === 'get') {
-            return $("input", $(elem)[0])[0].val();
+            return $("input", $(elem)[0]).eq(0).val();
         } else if (operation === 'set') {
-            $('input', $(elem)[0])[0].val(value);
+            $('input', $(elem)[0]).eq(0).val(value);
         }
     }
 };
