@@ -8,13 +8,14 @@
     <meta name="description" content="菜单信息管理">
 <#--<link rel="shortcut icon" href="favicon.ico">-->
     <link href="${request.contextPath}/webapp/static/css/bootstrap.min14ed.css?v=3.3.6" rel="stylesheet">
+    <link href="${request.contextPath}/webapp/static/css/font-awesome.min.css?v=4.7.0" rel="stylesheet">
 
     <!-- jqgrid-->
     <link href="${request.contextPath}/webapp/static/css/plugins/jqgrid/ui.jqgridffe4.css?0820" rel="stylesheet">
     <link href="${request.contextPath}/webapp/static/css/animate.min.css" rel="stylesheet">
     <link href="${request.contextPath}/webapp/static/css/style.min862f.css?v=4.1.0" rel="stylesheet">
     <link href="${request.contextPath}/webapp/static/css/plugins/jqgrid/ui.jqgridffe4.css?0820" rel="stylesheet">
-    <link href="${request.contextPath}/webapp/static/css/plugins/jqgrid/ui.jqgridffe4.css?0820" rel="stylesheet">
+<#--<link href="${request.contextPath}/webapp/static/css/plugins/jqgrid/ui.jqgridffe4.css?0820" rel="stylesheet">-->
     <style>
         .wrapper {
             height: 100%;
@@ -23,6 +24,10 @@
         .jqGrid_wrapper {
             height: 100%;
             background: white;
+        }
+
+        #menuLeaf {
+            height: 34px;
         }
 
         .fontDiv {
@@ -51,7 +56,8 @@
 <script src="${request.contextPath}/webapp/static/js/bootstrap.min.js?v=3.3.6"></script>
 <script src="${request.contextPath}/webapp/static/js/plugins/peity/jquery.peity.min.js"></script>
 <script src="${request.contextPath}/webapp/static/js/plugins/jqgrid/i18n/grid.locale-cnffe4.js?0820"></script>
-<script src="${request.contextPath}/webapp/static/js/plugins/jqgrid/jquery.jqGrid.minffe4.js?0820"></script>
+<#--<script src="${request.contextPath}/webapp/static/js/plugins/jqgrid/jquery.jqGrid.minffe4.js?0820"></script>-->
+<script src="${request.contextPath}/webapp/static/js/plugins/jqgrid/jquery.jqGrid.js?0820"></script>
 <script src="${request.contextPath}/webapp/static/js/plugins/layer/layer.min.js?0820"></script>
 <#--<script src="${request.contextPath}/webapp/static/js/plugins/datapicker/bootstrap-datepicker.js"></script>-->
 <script>

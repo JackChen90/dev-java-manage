@@ -59,7 +59,14 @@ public interface IMenuService {
 	 *
 	 * @param parentId 父节点id
 	 * @param menuName 菜单名称
+	 * @param id 节点id（编辑时会传节点id）
 	 * @return
 	 */
-	boolean checkMenuName(Integer parentId, String menuName);
+	boolean checkMenuName(Integer parentId, String menuName, Integer id);
+
+	/**
+	 *  新增/编辑/删除数据操作
+	 * @param dto 入参dto
+	 */
+	void operateMenuInfo(MenuInfoDTO dto);
 }

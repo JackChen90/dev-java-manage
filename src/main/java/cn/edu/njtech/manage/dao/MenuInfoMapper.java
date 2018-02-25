@@ -73,5 +73,37 @@ public interface MenuInfoMapper {
 	 * @return
 	 */
 	int countMenu(@Param("parentId") Integer parentId,
-				  @Param("menuName") String menuName);
+				  @Param("menuName") String menuName,
+				  @Param("id")  Integer id);
+
+	/**
+	 * 新增菜单信息
+	 *
+	 * @param menuInfo 新菜单bean
+	 */
+	void insertMenuInfo(MenuInfo menuInfo);
+
+	/**
+	 * 更新菜单信息
+	 *
+	 * @param menuInfo 更新后的菜单信息
+	 * @return
+	 */
+	int updateMenuInfo(MenuInfo menuInfo);
+
+	/**
+	 * 删除菜单信息
+	 *
+	 * @param integer 菜单id
+	 * @return
+	 */
+	int deleteById(Integer integer);
+
+	/**
+	 * 根据parentId查询子节点最大order
+	 *
+	 * @param parentId 父节点id
+	 * @return
+	 */
+	Integer queryMaxMenuOrder(Integer parentId);
 }

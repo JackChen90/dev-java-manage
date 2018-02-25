@@ -23,8 +23,30 @@ var menu = {
     operationMapUrl: "/operation/allOperation",
     //查询所有父节点信息
     queryParentsUrl: "/menu/queryParents4Select",
+    getAllOperation: function () {
+        var operationJson = {};
+        if (menu.allOperation) {
+            for (var i = 0; i < menu.allOperation.length; i++) {
+                operationJson[menu.allOperation[i].id] = menu.allOperation[i].description;
+            }
+        }
+        return operationJson;
+    },
     initAllOperation: function (data) {
         menu.allOperation = data;
+    },
+    operationToStr: function (cellvalue, options, cell) {
+        var result = '';
+        var cells = cellvalue.split("/");
+        for (var j = 0; j < cells.length; j++) {
+            for (var i = 0; i < menu.allOperation.length; i++) {
+                //页面操作与操作表每个操作的id做与运算，为0则不具备该操作权限
+                if (menu.allOperation[i].description == cells[j]) {
+                    result += menu.allOperation[i].id + ",";
+                }
+            }
+        }
+        return result.substr(0, result.length - 1);
     },
     convertOperation: function (cellvalue) {
         var result = '';
@@ -43,6 +65,9 @@ var menu = {
         } else {
             return "<span class=\"label label-primary\">目录</span>";
         }
+    },
+    iconToText: function (cellvalue, options, cell) {
+        return $('i', cell).attr('class');
     },
     convertIcon: function (cellvalue) {
         return "<i class=\"" + cellvalue + "\"></i>";
@@ -67,16 +92,20 @@ var menu = {
             return [false, '该父节点下已存在同名菜单'];
         }
     },
-    checkMenuName: function (parentId, menuName) {
-        if (!parentId) {
-            parentId = -1;
-        }
+    checkMenuName: function (parentId, menuName, id) {
         if (!menuName) {
             return;
         }
+        if (!parentId) {
+            parentId = -1;
+        }
+        var idStr ='';
+        if (id) {
+            idStr = "&id=" + id;
+        }
         //调用校验用户名服务
         return ajaxPostJson(menu.contextPath + menu.checkMenuNameUrl
-            + "?menuName=" + menuName + "&parentId=" + parentId,
+            + "?menuName=" + menuName + "&parentId=" + parentId + idStr,
             false,
             null, menu.checkMenuNameCallback);
     },
@@ -99,9 +128,9 @@ var menu = {
                 }
             },
             // jsonReader: { repeatitems: false, root: function (obj) { return obj; } },
-            colNames: ["id", "菜单名称", "图标", "type", "分类",
+            colNames: ["id", "父节点", "菜单名称", "图标", "type", "分类",
                 "菜单链接", "页面按钮",
-                "创建时间", "创建人", "更新时间", "更新人", "状态", "parentId"],
+                "创建时间", "创建人", "更新时间", "更新人", "状态"],
             colModel: [{
                 name: "id",
                 index: "id",
@@ -110,15 +139,14 @@ var menu = {
                 editable: false,
                 hidden: true
             }, {
-                name: "parentId",
-                index: "parentId",
+                name: "parentIdE",
+                index: "parent_id",
                 hidden: true,
                 width: 150,
                 formoptions: {label: '父节点<font color=\'red\'> *</font>'},
                 editable: true,
                 edittype: "select",
                 editrules: {
-                    required: true,
                     edithidden: true
                 },
                 editoptions: {
@@ -131,15 +159,6 @@ var menu = {
                             s += '<option value="' + this.id + '">' + this.menuName +
                                 '</option>';
                         });
-                        // //定时任务（其实应该也可以写回调方法），用户id 编辑时disable
-                        // setTimeout(function () {
-                        //     if (userRole.needDisable) {
-                        //         // $('#tr_' + field_id).attr('disabled', 'disabled');
-                        //         $('#userId').attr('disabled', 'disabled');
-                        //     } else {
-                        //         $('#userId').removeAttr('disabled');
-                        //     }
-                        // }, 50);
                         return s + "</select>";
                     }
                 }
@@ -159,6 +178,7 @@ var menu = {
                 align: "center",
                 width: 40,
                 formatter: menu.convertIcon,
+                unformat: menu.iconToText,
                 edittype: "custom",
                 editrules: {
                     required: true
@@ -180,22 +200,40 @@ var menu = {
                 editable: true,
                 sortable: false,
                 width: 60,
+                edittype: "select",
                 editrules: {
                     required: true
                 },
-                formatter: menu.convertCategory,
-                formoptions: {label: '分类<font color=\'red\'> *</font>'}
+                editoptions: {
+                    value: {true: '菜单', false: '目录'}
+                },
+                formatter: menu.convertCategory
             }, {
                 name: "url",
                 index: "url",
                 editable: true,
-                width: 180
+                editrules: {
+                    required: true
+                },
+                width: 180,
+                formoptions: {label: '菜单链接<font color=\'red\'> *</font>'}
             }, {
                 name: "operationAll",
                 index: "operation_all",
                 editable: true,
+                edittype: "select",
+                editrules: {
+                    required: true
+                },
+                editoptions: {
+                    multiple: true,
+                    size: 5,
+                    value: menu.getAllOperation
+                },
                 width: 180,
-                formatter: menu.convertOperation
+                formatter: menu.convertOperation,
+                unformat: menu.operationToStr,
+                formoptions: {label: '页面按钮<font color=\'red\'> *</font>'}
             }, {
                 name: "createTime",
                 index: "create_time",
@@ -237,7 +275,7 @@ var menu = {
             treeGridModel: 'adjacency',
             treedatatype: "json",
             ExpandColumn: 'menuName',
-            loadonce: true,
+            // loadonce: true,
             treeReader: {
                 parent_id_field: "parentId",
                 level_field: "menuLevel",
@@ -245,7 +283,7 @@ var menu = {
                 expanded_field: "expanded"
             },
             caption: "菜单信息管理",
-            editurl: menu.contextPath + menu.editUrl,
+            editurl: menu.contextPath + menu.editUrl + "?param=" + menu.postdata,
             hidegrid: false
         });
     },
@@ -266,14 +304,80 @@ var menu = {
     naviConfig: function (data) {
         $("#menu_info_list").jqGrid("navGrid", "#pager_list", data,
             {//edit option
+                recreateForm: true,
                 reloadAfterSubmit: true,
+                closeAfterEdit: true,
                 beforeSubmit: function (postdata, formid) {
-                    return menu.checkMenuName(postdata.parentId, postdata.menuName);
+                    //菜单类型为目录/菜单时，控制url的disabled
+                    $('#menuLeaf', formid).change(function () {
+                        var selectvalue = $(this).val();
+                        var urlCol = $('#url', formid);
+                        urlCol.val('');
+                        if (selectvalue == true) {
+                            urlCol.removeAttr('disabled');
+                        }
+                        else {
+                            urlCol.attr('disabled', 'disabled');
+                        }
+                    });
+
+                    //校验同级菜单重名
+                    return menu.checkMenuName(postdata.parentId,
+                        postdata.menuName, postdata.menu_info_list_id);
                 }
             },
             {//add option
+                recreateForm: true,
                 reloadAfterSubmit: true,
+                closeAfterAdd: true,
+                beforeCheckValues: function (posdata, formid, mode) {
+                    var selectvalue = $('#menuLeaf', formid).val();
+                    //类型为"菜单"，则url与按钮操作必填；否则不必填
+                    var _menuInfo = $("#menu_info_list");
+                    if (selectvalue == "false") {
+                        _menuInfo.setColProp('url', {editrules: {required: false}});
+                        _menuInfo.setColProp('operationAll', {editrules: {required: false}});
+                    } else {
+                        _menuInfo.setColProp('url', {editrules: {required: true}});
+                        _menuInfo.setColProp('operationAll', {editrules: {required: true}});
+                    }
+                },
+                beforeInitData: function (formid) {//beforeInitData在form创建前执行，所以
+                    // var selectvalue = $('#menuLeaf', formid).val(); //此处有问题。此时value获取不到，得拿grid中的值
+                    // if (true) {
+                    //     $("#menu_info_list").setColProp('operationAll',
+                    //         {formoptions: {label: '页面按钮'}});
+                    // }else {
+                    //     $("#menu_info_list").setColProp('operationAll',
+                    //         {formoptions: {label: '页面按钮<font color=\'red\'> *</font>'}});
+                    // }
+                    //beforeInitData返回true/false，返回false则form不显示
+                    return true;
+                },
+                beforeShowForm: function (formid) {
+                    //菜单类型为目录/菜单时，控制url/operationAll的disabled
+                    $('#menuLeaf', formid).change(function () {
+                        var selectvalue = $(this).val();
+                        var urlCol = $('#url', formid);
+                        var operationCol = $('#operationAll', formid);
+                        urlCol.val('');
+                        if (selectvalue == "true") {
+                            urlCol.removeAttr('disabled');
+                            operationCol.removeAttr('disabled');
+                            $('label[for=url]').html('菜单链接<font color=\'red\'> *</font>');
+                            $('label[for=operationAll]').html('页面按钮<font color=\'red\'> *</font>');
+                        }
+                        else {
+                            urlCol.attr('disabled', 'disabled');
+                            operationCol.attr('disabled', 'disabled');
+                            $('label[for=url]').html('菜单链接');
+                            $('label[for=operationAll]').html('页面按钮');
+                        }
+                    });
+                },
                 beforeSubmit: function (postdata, formid) {
+                    // console.log(postdata);
+                    //校验同级菜单重名
                     return menu.checkMenuName(postdata.parentId, postdata.menuName);
                 }
             },
@@ -295,5 +399,30 @@ var menu = {
         var _menu_list = $("#menu_info_list");
         var width = _jqGrid_wrapper.width();
         _menu_list.setGridWidth(width);
+    }
+};
+
+var radio = {
+    element: function (value, options) {
+        var menu = '<span><input class="fontInput" type="radio" name="RadioGender" value="0"';
+        var breakline = '/>菜单';
+        var catalog = '&nbsp;<input class="fontInput" type="radio" name="RadioGender" value="1"';
+        var end = '/>目录</span>';
+        var radiohtml;
+        if (!value) {
+            radiohtml = menu + ' checked="checked"' + breakline + catalog + end;
+            return radiohtml;
+        } else {
+            radiohtml = menu + breakline + catalog + ' checked="checked"' + end;
+            return radiohtml;
+        }
+    },
+    value: function (elem, operation, value) {
+        var $elems = $(elem).find("input[name=RadioGender]");
+        if (operation === "get") {
+            return $elems.first().is(":checked") ? false : true;
+        } else if (operation === "set") {
+            $elems.val(value);
+        }
     }
 };

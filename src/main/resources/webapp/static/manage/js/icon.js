@@ -24,18 +24,6 @@ var icon = {
             '<input id="ico-btn" style="width: 100px;"  class="btn btn-warning fontInput" type="button" value="选择图标">\n' +
             '<span style="clear:both"></span>'
             '</div>\n';
-
-        //绑定点击事件
-        // $('#ico-btn',$(elemStr)[0]).click(function () {
-        //     alert(123);
-        //     layer.open({
-        //         type: 1,
-        //         title: '图标列表',
-        //         closeBtn: 1,
-        //         shadeClose: true,
-        //         content: '../fontIconList.html'
-        //     });
-        // });
         //通过jquery返回自定义元素
         return $(elemStr)[0];
     },

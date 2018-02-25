@@ -47,4 +47,11 @@ public class MenuServiceTest {
 
 		List<MenuInfoDTO> result = menuService.queryMenuInfoList(new GridDataDTO());
 	}
+
+	@Test
+	public void test(){
+		Integer a = null;
+//		Long b  = a.longValue()+1;
+		System.out.println(a.longValue()+1);
+	}
 }

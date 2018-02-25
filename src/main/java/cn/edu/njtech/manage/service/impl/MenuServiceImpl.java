@@ -2,6 +2,7 @@ package cn.edu.njtech.manage.service.impl;
 
 import cn.edu.njtech.manage.constant.RedisConstant;
 import cn.edu.njtech.manage.dao.MenuInfoMapper;
+import cn.edu.njtech.manage.domain.MenuInfo;
 import cn.edu.njtech.manage.dto.GridDataDTO;
 import cn.edu.njtech.manage.dto.MenuInfoDTO;
 import cn.edu.njtech.manage.service.IMenuService;
@@ -14,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Type;
@@ -129,7 +131,7 @@ public class MenuServiceImpl implements IMenuService {
 		logger.info("=== queryParents start ===");
 		List<MenuInfoDTO> result = menuInfoMapper.queryParents();
 		MenuInfoDTO root = new MenuInfoDTO();
-		root.setId(ROOT);
+		root.setId(String.valueOf(ROOT));
 		root.setMenuName("根节点");
 		if (result == null) {
 			result = new ArrayList<>();
@@ -140,11 +142,98 @@ public class MenuServiceImpl implements IMenuService {
 	}
 
 	@Override
-	public boolean checkMenuName(Integer parentId, String menuName) {
-		logger.info("=== checkMenuName start ===, parentId:{}, menuName:{}", parentId, menuName);
-		int count = menuInfoMapper.countMenu(parentId, menuName);
+	public boolean checkMenuName(Integer parentId, String menuName, Integer id) {
+		logger.info("=== checkMenuName start ===, parentId:{}, menuName:{}, id:{}", parentId, menuName, id);
+		int count = menuInfoMapper.countMenu(parentId, menuName, id);
 		logger.info("=== checkMenuName success ===, count:{}", count);
 		return count > 0 ? false : true;
+	}
+
+	@Override
+	public void operateMenuInfo(MenuInfoDTO dto) {
+		logger.info("=== operateMenuInfo start ===, dto:{}", dto);
+		if (null == dto) {
+			logger.error("=== operateMenuInfo error, dto is null ===");
+			return;
+		}
+		switch (dto.getOper()) {
+			case "add":
+				addMenuInfo(dto);
+				break;
+			case "edit":
+				editMenuInfo(dto);
+				break;
+			case "del":
+				deleteMenuInfo(dto);
+				break;
+			default:
+				break;
+		}
+		logger.info("=== operateMenuInfo success ===");
+	}
+
+	/**
+	 * 删除菜单信息
+	 *
+	 * @param dto 菜单信息dto
+	 */
+	private void deleteMenuInfo(MenuInfoDTO dto) {
+		logger.info("=== deleteMenuInfo start ===");
+		//删除用户角色信息
+		int count = menuInfoMapper.deleteById(Integer.valueOf(dto.getId()));
+		logger.info("=== deleteMenuInfo success ===, rows count:{}", count);
+	}
+
+	/**
+	 * 编辑菜单信息
+	 *
+	 * @param dto 菜单信息dto
+	 */
+	private void editMenuInfo(MenuInfoDTO dto) {
+		logger.info("=== editMenuInfo start ===");
+		MenuInfo menuInfo = MenuInfoDTO.toEntity(dto);
+		//security中获取当事人name
+		String userName = SecurityContextHolder
+				.getContext().getAuthentication().getName();
+		menuInfo.setUpdateUser(userName);
+		menuInfo.setUpdateTime(new Date());
+		//更新用户信息
+		int count = menuInfoMapper.updateMenuInfo(menuInfo);
+		logger.info("=== editMenuInfo success ===, rows count:{}", count);
+	}
+
+	/**
+	 * 新增菜单信息
+	 *
+	 * @param dto 入参dto
+	 */
+	private void addMenuInfo(MenuInfoDTO dto) {
+		logger.info("=== addMenuInfo start ===");
+		//dto转为entity
+		MenuInfo menuInfo = MenuInfoDTO.toEntity(dto);
+		//测试用，表示管理页面
+		menuInfo.setMenuType("1");
+		//设置未删除
+		menuInfo.setDelFlag("0");
+		if (menuInfo.getParentId().equals(ROOT)) {
+			menuInfo.setMenuLevel(1L);
+		} else {
+			menuInfo.setMenuLevel(2L);
+		}
+		Integer currentMaxOrder = menuInfoMapper.queryMaxMenuOrder(dto.getParentId());
+		if (currentMaxOrder == null) {
+			currentMaxOrder = 0;
+		}
+		menuInfo.setSortOrder(currentMaxOrder.longValue() + 1);
+		//security中获取当事人name
+		String userName = SecurityContextHolder
+				.getContext().getAuthentication().getName();
+		menuInfo.setCreateUser(userName);
+		menuInfo.setCreateTime(new Date());
+		logger.info("=== addMenuInfo ===, userRole:{}", menuInfo);
+		//数据入db
+		menuInfoMapper.insertMenuInfo(menuInfo);
+		logger.info("=== addMenuInfo success ===");
 	}
 
 	/**
@@ -162,12 +251,12 @@ public class MenuServiceImpl implements IMenuService {
 				menus) {
 			if (sortOrder.get(dto.getId()) == null) {
 				if (dto.getParentId() == null || ROOT.equals(dto.getParentId())) {
-					sortOrder.put(dto.getId(), sortScore.multiply(new BigDecimal(dto.getSortOrder().toString())));
+					sortOrder.put(Integer.valueOf(dto.getId()), sortScore.multiply(new BigDecimal(dto.getSortOrder().toString())));
 				} else {
 					BigDecimal parentScore = sortOrder.get(dto.getParentId());
 //					int hierarchy = getHierarchy(parentScore);
 					int hierarchy = parentScore.scale() + 1;
-					sortOrder.put(dto.getId(),
+					sortOrder.put(Integer.valueOf(dto.getId()),
 							sortScore.pow(hierarchy).multiply(new BigDecimal(dto.getSortOrder())).add(parentScore));
 				}
 			}
@@ -191,7 +280,7 @@ public class MenuServiceImpl implements IMenuService {
 		for (Map.Entry<Integer, BigDecimal> key :
 				sortOrder) {
 			for (MenuInfoDTO menu : menus) {
-				if (key.getKey().equals(menu.getId())) {
+				if (key.getKey().equals(Integer.parseInt(menu.getId()))) {
 					result.add(menu);
 					break;
 				}
@@ -242,7 +331,7 @@ public class MenuServiceImpl implements IMenuService {
 				//入结果list
 				result.add(dto);
 				//加入关系map
-				relation.put(dto.getId(), dto.getParentId());
+				relation.put(Integer.valueOf(dto.getId()), dto.getParentId());
 			} else {//不为父节点，则插入某个父节点的children列表
 				//将节点插入某个父节点的children列表
 				addChildren(result, dto, relation);
@@ -284,7 +373,7 @@ public class MenuServiceImpl implements IMenuService {
 		Integer id = parents.get(index);
 		for (MenuInfoDTO dto :
 				list) {
-			if (dto.getId().equals(id)) {
+			if (id.equals(Integer.parseInt(dto.getId()))) {
 				//初始化children列表
 				if (dto.getChildren() == null) {
 					dto.setChildren(new ArrayList<>());

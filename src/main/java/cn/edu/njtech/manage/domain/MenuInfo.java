@@ -17,6 +17,8 @@ public class MenuInfo {
 
     private String url;
 
+    private String menuIcon;
+
     private Integer operationAll;
 
     private Date createTime;
@@ -85,6 +87,14 @@ public class MenuInfo {
 
     public void setUrl(String url) {
         this.url = url == null ? null : url.trim();
+    }
+
+    public String getMenuIcon() {
+        return menuIcon;
+    }
+
+    public void setMenuIcon(String menuIcon) {
+        this.menuIcon = menuIcon;
     }
 
     public Integer getOperationAll() {

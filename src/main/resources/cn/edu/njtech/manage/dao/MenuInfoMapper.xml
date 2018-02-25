@@ -4,6 +4,7 @@
 	<resultMap id="MenuInfoDTO" type="cn.edu.njtech.manage.dto.MenuInfoDTO">
 		<id column="id" jdbcType="INTEGER" property="id"/>
 		<result column="parent_id" jdbcType="INTEGER" property="parentId"/>
+		<result column="parent_id_e" jdbcType="INTEGER" property="parentIdE"/>
 		<result column="menu_level" jdbcType="DECIMAL" property="menuLevel"/>
 		<result column="menu_name" jdbcType="VARCHAR" property="menuName"/>
 		<result column="menu_type" jdbcType="CHAR" property="menuType"/>
@@ -86,7 +87,11 @@
 	<select id="queryMenus" resultMap="MenuInfoDTO">
 		SELECT
 		id,
-		parent_id,
+		CASE parent_id
+		WHEN -1 THEN NULL
+		ELSE parent_id
+		END AS parent_id,
+		parent_id as parent_id_e,
 		menu_level -1 as menu_level,
 		menu_name,
 		menu_type,
@@ -124,7 +129,7 @@
 				${orderStr}
 			</when>
 			<otherwise>
-				ORDER BY  mi.parent_id, mi.sort_order
+				ORDER BY mi.parent_id, mi.sort_order
 			</otherwise>
 		</choose>
 	</select>
@@ -156,13 +161,26 @@
 		count(*)
 		from t_menu_info mi
 		WHERE mi.parent_id = #{parentId}
-		AND mi.menuName = #{menuName}
+		AND mi.menu_name = #{menuName}
+		<if test="id != null">
+			AND mi.id <![CDATA[<>]]> #{id}
+		</if>
 	</select>
 
-	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
-    delete from t_menu_info
-    where id = #{id,jdbcType=INTEGER}
-  </delete>
+	<!--根据父节点查询子节点最大order-->
+	<select id="queryMaxMenuOrder" parameterType="java.lang.Integer"
+			resultType="java.lang.Integer">
+		SELECT
+		MAX(sort_order)
+		FROM t_menu_info
+		WHERE parent_id = #{parentId,jdbcType=INTEGER}
+	</select>
+
+	<!--根据id删除菜单信息-->
+	<delete id="deleteById" parameterType="java.lang.Integer">
+    	delete from t_menu_info
+    	where id = #{id,jdbcType=INTEGER}
+  	</delete>
 	<insert id="insert" parameterType="cn.edu.njtech.manage.domain.MenuInfo">
 		insert into t_menu_info (id, parent_id, menu_level,
 		menu_name, sort_order, url,
@@ -175,10 +193,11 @@
 		#{updateTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}, #{delFlag,jdbcType=CHAR},
 		#{description,jdbcType=VARCHAR})
 	</insert>
-	<insert id="insertSelective" parameterType="cn.edu.njtech.manage.domain.MenuInfo">
+
+	<!--新增菜单记录-->
+	<insert id="insertMenuInfo" parameterType="cn.edu.njtech.manage.domain.MenuInfo">
 		insert into t_menu_info
 		<trim prefix="(" suffix=")" suffixOverrides=",">
-			id,
 			<if test="parentId != null">
 				parent_id,
 			</if>
@@ -188,11 +207,17 @@
 			<if test="menuName != null">
 				menu_name,
 			</if>
+			<if test="menuType != null">
+				menu_type,
+			</if>
 			<if test="sortOrder != null">
 				sort_order,
 			</if>
 			<if test="url != null">
 				url,
+			</if>
+			<if test="menuIcon != null">
+				icon,
 			</if>
 			<if test="operationAll != null">
 				operation_all,
@@ -217,7 +242,6 @@
 			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
-			#{id,jdbcType=INTEGER},
 			<if test="parentId != null">
 				#{parentId,jdbcType=INTEGER},
 			</if>
@@ -227,11 +251,17 @@
 			<if test="menuName != null">
 				#{menuName,jdbcType=VARCHAR},
 			</if>
+			<if test="menuType != null">
+				#{menuType,jdbcType=VARCHAR},
+			</if>
 			<if test="sortOrder != null">
 				#{sortOrder,jdbcType=DECIMAL},
 			</if>
 			<if test="url != null">
 				#{url,jdbcType=VARCHAR},
+			</if>
+			<if test="menuIcon != null">
+				#{menuIcon,jdbcType=VARCHAR},
 			</if>
 			<if test="operationAll != null">
 				#{operationAll,jdbcType=INTEGER},
@@ -256,7 +286,9 @@
 			</if>
 		</trim>
 	</insert>
-	<update id="updateByPrimaryKeySelective" parameterType="cn.edu.njtech.manage.domain.MenuInfo">
+
+	<!--更新菜单信息-->
+	<update id="updateMenuInfo" parameterType="cn.edu.njtech.manage.domain.MenuInfo">
 		update t_menu_info
 		<set>
 			<if test="parentId != null">
@@ -273,6 +305,9 @@
 			</if>
 			<if test="url != null">
 				url = #{url,jdbcType=VARCHAR},
+			</if>
+			<if test="menuIcon != null">
+				icon = #{menuIcon,jdbcType=VARCHAR},
 			</if>
 			<if test="operationAll != null">
 				operation_all = #{operationAll,jdbcType=INTEGER},

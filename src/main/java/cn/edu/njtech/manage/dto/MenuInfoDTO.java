@@ -1,5 +1,6 @@
 package cn.edu.njtech.manage.dto;
 
+import cn.edu.njtech.manage.domain.MenuInfo;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.util.Date;
@@ -11,9 +12,19 @@ import java.util.List;
  * @description MenuInfoDTO
  */
 public class MenuInfoDTO {
-	private Integer id;
+	/**
+	 * 操作类型 add/edit/del
+	 */
+	private String oper;
+
+	private String id;
 
 	private Integer parentId;
+
+	/**
+	 * 用于编辑（treeGrid parentId在postdata中会被变更）
+	 */
+	private Integer parentIdE;
 
 	private Long menuLevel;
 
@@ -31,7 +42,7 @@ public class MenuInfoDTO {
 
 	private Integer operation;
 
-	private Integer operationAll;
+	private String operationAll;
 
 	private Date createTime;
 
@@ -73,11 +84,19 @@ public class MenuInfoDTO {
 				'}';
 	}
 
-	public Integer getId() {
+	public String getOper() {
+		return oper;
+	}
+
+	public void setOper(String oper) {
+		this.oper = oper;
+	}
+
+	public String getId() {
 		return id;
 	}
 
-	public void setId(Integer id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
@@ -95,6 +114,14 @@ public class MenuInfoDTO {
 
 	public void setParentId(Integer parentId) {
 		this.parentId = parentId;
+	}
+
+	public Integer getParentIdE() {
+		return parentIdE;
+	}
+
+	public void setParentIdE(Integer parentIdE) {
+		this.parentIdE = parentIdE;
 	}
 
 	public Long getMenuLevel() {
@@ -153,11 +180,11 @@ public class MenuInfoDTO {
 		this.operation = operation;
 	}
 
-	public Integer getOperationAll() {
+	public String getOperationAll() {
 		return operationAll;
 	}
 
-	public void setOperationAll(Integer operationAll) {
+	public void setOperationAll(String operationAll) {
 		this.operationAll = operationAll;
 	}
 
@@ -225,5 +252,27 @@ public class MenuInfoDTO {
 
 	public void setChildren(List<MenuInfoDTO> children) {
 		this.children = children;
+	}
+
+	public static MenuInfo toEntity(MenuInfoDTO dto) {
+		MenuInfo menuInfo = new MenuInfo();
+		menuInfo.setParentId(dto.getParentId());
+		menuInfo.setId(dto.getId() == null ? null : Integer.valueOf(dto.getId()));
+		menuInfo.setMenuName(dto.getMenuName());
+		menuInfo.setMenuLevel(dto.getMenuLevel());
+		menuInfo.setMenuType(dto.getMenuType());
+		menuInfo.setUrl(dto.getUrl());
+		menuInfo.setMenuIcon(dto.getMenuIcon());
+		menuInfo.setOperationAll(Integer.valueOf(dto.getOperationAll()));
+		menuInfo.setDescription(dto.getDescription());
+		menuInfo.setSortOrder(dto.getSortOrder());
+		menuInfo.setDelFlag(dto.getDelFlag());
+
+		menuInfo.setCreateTime(dto.getCreateTime());
+		menuInfo.setCreateUser(dto.getCreateUser());
+		menuInfo.setUpdateTime(dto.getUpdateTime());
+		menuInfo.setUpdateUser(dto.getUpdateUser());
+
+		return menuInfo;
 	}
 }

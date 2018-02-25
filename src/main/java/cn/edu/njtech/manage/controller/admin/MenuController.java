@@ -1,11 +1,14 @@
 package cn.edu.njtech.manage.controller.admin;
 
+import cn.edu.njtech.manage.constant.ErrorCode;
 import cn.edu.njtech.manage.constant.HandleConstant;
+import cn.edu.njtech.manage.constant.JudgeConstant;
 import cn.edu.njtech.manage.constant.OperationConstant;
 import cn.edu.njtech.manage.dto.GridDataDTO;
 import cn.edu.njtech.manage.dto.MenuInfoDTO;
 import cn.edu.njtech.manage.service.IMenuService;
 import cn.edu.njtech.manage.util.*;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +40,11 @@ public class MenuController {
 
 	@Autowired
 	private GridUtil gridUtil;
+
+	/**
+	 * 根节点标识
+	 */
+	private static final Integer ROOT = -1;
 
 	/**
 	 * 用户左侧导航栏信息查询
@@ -128,11 +136,12 @@ public class MenuController {
 
 	/**
 	 * 为菜单新增/编辑parentId下拉框提供数据
+	 *
 	 * @return
 	 */
 	@RequestMapping(value = "queryParents4Select", method = RequestMethod.GET)
 	@ResponseBody
-	public JsonResponse queryParents4Select(){
+	public JsonResponse queryParents4Select() {
 		logger.info("=== queryParents4Select start ===");
 		JsonResponse jsonResponse;
 
@@ -146,17 +155,19 @@ public class MenuController {
 
 	/**
 	 * 校验菜单名不重复
+	 *
 	 * @return
 	 */
 	@RequestMapping(value = "checkMenuName", method = RequestMethod.POST)
 	@ResponseBody
 	public JsonResponse checkMenuName(@RequestParam Integer parentId,
-									  @RequestParam String menuName){
+									  @RequestParam String menuName,
+									  Integer id) {
 		logger.info("=== checkMenuName start ===");
 		JsonResponse jsonResponse;
 
 		//校验同一父节点下菜单名不重复
-		boolean flag = menuService.checkMenuName(parentId,menuName);
+		boolean flag = menuService.checkMenuName(parentId, menuName, id);
 		if (flag) {
 			jsonResponse = new JsonResponse(HandleConstant.HANDLE_SUCCESS, true);
 		} else {
@@ -166,5 +177,124 @@ public class MenuController {
 		logger.info("=== checkMenuName success ===, result:{}", flag);
 		jsonResponse = new JsonResponse(HandleConstant.HANDLE_SUCCESS, flag);
 		return jsonResponse;
+	}
+
+
+	/**
+	 * 新增/编辑/删除数据操作
+	 *
+	 * @param dto 入参数据
+	 * @return
+	 */
+	@RequestMapping(value = "operateMenuData", method = RequestMethod.POST)
+	@ResponseBody
+	public JsonResponse operateData(MenuInfoDTO dto) {
+		logger.info("=== operateData start ===, dto:{}", dto);
+		HandleResult handleResult = judgeRequest(dto);
+		if (HandleConstant.HANDLE_FAIL.equals(handleResult.getFlag())) {
+			logger.error("=== operateData judgeRequest fail ===, message:{}", handleResult.getMessage());
+			return new JsonResponse(HandleConstant.HANDLE_FAIL, ErrorCode.WRONG_PARAM, handleResult.getMessage());
+		}
+		//执行数据操作
+		menuService.operateMenuInfo(dto);
+		return new JsonResponse(HandleConstant.HANDLE_SUCCESS);
+	}
+
+	/**
+	 * 校验入参
+	 *
+	 * @param dto 入参实体
+	 * @return HandleResult
+	 */
+	private HandleResult judgeRequest(MenuInfoDTO dto) {
+		HandleResult result = null;
+		if (null == dto) {
+			result = new HandleResult(JudgeConstant.JUDGE_FAIL, "params empty");
+			return result;
+		}
+		//校验oper
+		if (StringUtils.isEmpty(dto.getOper())) {
+			result = new HandleResult(JudgeConstant.JUDGE_FAIL, "oper is null");
+			return result;
+		} else {
+			boolean flag = true;
+			switch (dto.getOper()) {
+				case "edit":
+					//校验parentId、operationAll等参数
+					result = judgeParam(dto);
+					if (!result.getFlag()) {
+						flag = false;
+					}
+					break;
+				case "del":
+					//编辑或删除操作校验id不为空
+					if (StringUtils.isEmpty(dto.getId())) {
+						flag = false;
+						result = new HandleResult(JudgeConstant.JUDGE_FAIL, "id is null");
+					}
+					break;
+				default:
+				case "add":
+					//新增时id设置为null（jqgrid默认传"_empty"，后面强转要出错）
+					dto.setId(null);
+					//校验parentId、operationAll等参数
+					result = judgeParam(dto);
+					if (!result.getFlag()) {
+						flag = false;
+					}
+					break;
+
+			}
+			if (!flag) {
+				return result;
+			}
+		}
+		result = new HandleResult(JudgeConstant.JUDGE_SUCCESS);
+		return result;
+	}
+
+	/**
+	 * 校验parentId、operationAll等参数
+	 *
+	 * @param dto 入参dto
+	 * @return
+	 */
+	private HandleResult judgeParam(MenuInfoDTO dto) {
+		HandleResult result = null;
+
+		//校验parentIdE并设置parentId
+		if (dto.getParentIdE() == null) {
+			dto.setParentId(ROOT);
+		} else if (dto.getParentIdE() >= ROOT) {
+			dto.setParentId(dto.getParentIdE());
+		} else {
+			result = new HandleResult(HandleConstant.HANDLE_FAIL, "parentId error");
+			return result;
+		}
+
+		//校验并设置operationAll
+		if (!StringUtils.isEmpty(dto.getUrl()) && StringUtils.isEmpty(dto.getOperationAll())) {
+			//url不为空，按钮操作不能为空
+			result = new HandleResult(HandleConstant.HANDLE_FAIL, "operationAll is empty");
+			return result;
+		} else {
+			//url为空，即为目录，此时操作权限为空
+			if (StringUtils.isEmpty(dto.getUrl())) {
+				dto.setOperationAll("0");
+			} else {
+				//operationAll string形式，先切割，然后将所有值相加得到最终操作权限值
+				String items[] = dto.getOperationAll().split(",");
+				int operation = 0;
+				for (String oper :
+						items) {
+					if (!StringUtils.isEmpty(oper)) {
+						operation += Integer.parseInt(oper);
+					}
+				}
+				dto.setOperationAll(String.valueOf(operation));
+			}
+		}
+		result = new HandleResult(JudgeConstant.JUDGE_SUCCESS);
+		return result;
 	}
 }
