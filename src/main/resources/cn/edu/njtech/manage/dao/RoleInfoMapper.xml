@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.edu.njtech.manage.dao.RoleInfoMapper">
-	<resultMap id="BaseResultMap" type="cn.edu.njtech.manage.domain.RoleInfo">
-		<id column="id" jdbcType="INTEGER" property="id"/>
+	<resultMap id="roleInfoDTO" type="cn.edu.njtech.manage.dto.RoleInfoDTO">
+		<id column="id" jdbcType="VARCHAR" property="id"/>
 		<result column="role_name" jdbcType="VARCHAR" property="roleName"/>
 		<result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
 		<result column="create_user" jdbcType="VARCHAR" property="createUser"/>
@@ -14,12 +14,13 @@
 	<sql id="Base_Column_List">
     id, role_name, create_time, create_user, update_time, update_user, del_flag, description
   </sql>
-	<select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+	<select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="roleInfoDTO">
 		select
 		<include refid="Base_Column_List"/>
 		from t_role_info
 		where id = #{id,jdbcType=INTEGER}
 	</select>
+
 	<!--为下拉框查询角色列表-->
 	<select id="queryRoleInfo4Select" resultType="cn.edu.njtech.manage.dto.RoleInfoDTO">
 		SELECT
@@ -28,6 +29,38 @@
 		FROM t_role_info
 		WHERE
 		del_flag = 0
+	</select>
+
+	<!--获取角色列表-->
+	<select id="queryRoleInfo" parameterType="map" resultMap="roleInfoDTO">
+		SELECT
+		<include refid="Base_Column_List"/>
+		FROM t_role_info
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="searchStr != null">
+				and ${searchStr}
+			</if>
+		</trim>
+		<choose>
+			<when test="orderStr != null">
+				${orderStr}
+			</when>
+			<otherwise>
+				ORDER BY id
+			</otherwise>
+		</choose>
+	</select>
+
+	<!--获取用户信息总量-->
+	<select id="queryRoleInfoCount" resultType="java.lang.Integer">
+		SELECT
+		count(*)
+		FROM t_role_info
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="searchStr != null">
+				and ${searchStr}
+			</if>
+		</trim>
 	</select>
 
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">

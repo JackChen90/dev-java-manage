@@ -144,6 +144,7 @@ var menu = {
                 hidden: true,
                 width: 150,
                 formoptions: {label: '父节点<font color=\'red\'> *</font>'},
+                sortable: false,
                 editable: true,
                 edittype: "select",
                 editrules: {
@@ -165,6 +166,7 @@ var menu = {
             }, {
                 name: "menuName",
                 index: "menu_name",
+                sortable: false,
                 editable: true,
                 width: 140,
                 editrules: {
@@ -174,6 +176,7 @@ var menu = {
             }, {
                 name: "menuIcon",
                 index: "menuIcon",
+                sortable: false,
                 editable: true,
                 align: "center",
                 width: 40,
@@ -211,6 +214,7 @@ var menu = {
             }, {
                 name: "url",
                 index: "url",
+                sortable: false,
                 editable: true,
                 editrules: {
                     required: true
@@ -220,6 +224,7 @@ var menu = {
             }, {
                 name: "operationAll",
                 index: "operation_all",
+                sortable: false,
                 editable: true,
                 edittype: "select",
                 editrules: {

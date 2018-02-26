@@ -1,5 +1,7 @@
 package cn.edu.njtech.manage.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.util.Date;
 
 /**
@@ -8,10 +10,16 @@ import java.util.Date;
  * @description RoleInfoDTO
  */
 public class RoleInfoDTO {
+
+	/**
+	 * 操作类型 add/edit/del
+	 */
+	private String oper;
+
 	/**
 	 * 角色id
 	 */
-	private Integer id;
+	private String id;
 
 	/**
 	 * 角色名称
@@ -48,11 +56,11 @@ public class RoleInfoDTO {
 	 */
 	private String description;
 
-	public Integer getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(Integer id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
@@ -64,6 +72,7 @@ public class RoleInfoDTO {
 		this.roleName = roleName;
 	}
 
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
 	public Date getCreateTime() {
 		return createTime;
 	}
@@ -80,6 +89,7 @@ public class RoleInfoDTO {
 		this.createUser = createUser;
 	}
 
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
 	public Date getUpdateTime() {
 		return updateTime;
 	}

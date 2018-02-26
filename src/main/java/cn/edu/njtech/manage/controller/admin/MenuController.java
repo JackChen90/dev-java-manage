@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -45,6 +46,12 @@ public class MenuController {
 	 * 根节点标识
 	 */
 	private static final Integer ROOT = -1;
+
+	@InitBinder
+	protected void initBinder(WebDataBinder binder) {
+		// _input_charset 会变成 input_charset,并且value=null, 这里处理
+		binder.setFieldMarkerPrefix(null);
+	}
 
 	/**
 	 * 用户左侧导航栏信息查询
