@@ -63,28 +63,27 @@
 		</trim>
 	</select>
 
-	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
-    delete from t_role_info
-    where id = #{id,jdbcType=INTEGER}
-  </delete>
-	<insert id="insert" parameterType="cn.edu.njtech.manage.domain.RoleInfo">
-		<selectKey keyProperty="id" order="BEFORE" resultType="java.lang.Integer">
-			SELECT LAST_INSERT_ID()
-		</selectKey>
-		insert into t_role_info (id, role_name, create_time,
-		create_user, update_time, update_user,
-		del_flag, description)
-		values (#{id,jdbcType=INTEGER}, #{roleName,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP},
-		#{createUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR},
-		#{delFlag,jdbcType=CHAR}, #{description,jdbcType=VARCHAR})
-	</insert>
-	<insert id="insertSelective" parameterType="cn.edu.njtech.manage.domain.RoleInfo">
-		<selectKey keyProperty="id" order="BEFORE" resultType="java.lang.Integer">
-			SELECT LAST_INSERT_ID()
-		</selectKey>
+	<!--根据角色名称查询记录条数-->
+	<select id="countRoleName" resultType="java.lang.Integer">
+		SELECT
+		COUNT(*)
+		FROM t_role_info
+		WHERE role_name = #{roleName}
+		<if test="id != null">
+			AND id <![CDATA[<>]]> #{id}
+		</if>
+	</select>
+
+	<!--删除角色信息-->
+	<delete id="deleteById" parameterType="java.lang.Integer">
+		delete from t_role_info
+		where id = #{id,jdbcType=INTEGER}
+  	</delete>
+
+	<!--新增角色信息-->
+	<insert id="insertRoleInfo" parameterType="cn.edu.njtech.manage.domain.RoleInfo">
 		insert into t_role_info
 		<trim prefix="(" suffix=")" suffixOverrides=",">
-			id,
 			<if test="roleName != null">
 				role_name,
 			</if>
@@ -108,7 +107,6 @@
 			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
-			#{id,jdbcType=INTEGER},
 			<if test="roleName != null">
 				#{roleName,jdbcType=VARCHAR},
 			</if>
@@ -132,7 +130,9 @@
 			</if>
 		</trim>
 	</insert>
-	<update id="updateByPrimaryKeySelective" parameterType="cn.edu.njtech.manage.domain.RoleInfo">
+
+	<!--更新角色信息-->
+	<update id="updateRoleInfo" parameterType="cn.edu.njtech.manage.domain.RoleInfo">
 		update t_role_info
 		<set>
 			<if test="roleName != null">
@@ -159,15 +159,4 @@
 		</set>
 		where id = #{id,jdbcType=INTEGER}
 	</update>
-	<update id="updateByPrimaryKey" parameterType="cn.edu.njtech.manage.domain.RoleInfo">
-    update t_role_info
-    set role_name = #{roleName,jdbcType=VARCHAR},
-      create_time = #{createTime,jdbcType=TIMESTAMP},
-      create_user = #{createUser,jdbcType=VARCHAR},
-      update_time = #{updateTime,jdbcType=TIMESTAMP},
-      update_user = #{updateUser,jdbcType=VARCHAR},
-      del_flag = #{delFlag,jdbcType=CHAR},
-      description = #{description,jdbcType=VARCHAR}
-    where id = #{id,jdbcType=INTEGER}
-  </update>
 </mapper>

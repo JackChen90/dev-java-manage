@@ -37,12 +37,18 @@ var role = {
             return [false, '已存在相同用户名'];
         }
     },
-    checkRoleName: function (roleName) {
+    checkRoleName: function (roleName, id) {
         if (!roleName) {
             return;
         }
+        var idStr = '';
+        alert(id);
+        if (id) {
+            idStr = "&id=" + id;
+        }
         //调用校验用户名服务
-        return ajaxPostJson(role.contextPath + role.checkRoleNameUrl + "?roleName=" + roleName, false,
+        return ajaxPostJson(role.contextPath + role.checkRoleNameUrl
+            + "?roleName=" + roleName + idStr, false,
             null, role.checkRoleNameCallback);
     },
     createRoleGrid: function () {
@@ -65,7 +71,7 @@ var role = {
                     repeatitems: false
                 }
             },
-            colNames: ["id", "用户名", "真实姓名", "密码", "电话", "描述", "创建时间", "创建人", "更新时间", "更新人", "状态"],
+            colNames: ["id", "角色名", "描述", "创建时间", "创建人", "更新时间", "更新人", "状态"],
             colModel: [{
                 name: "id",
                 index: "id",
@@ -79,58 +85,22 @@ var role = {
                 width: 90,
                 editrules: {
                     required: true
-                    // custom: true,
-                    // custom_func: function (param) {
-                    //     return role.checkRoleName(param)
-                    // }
                 },
-                formoptions: {label: '用户名<font color=\'red\'> *</font>'}
-            }, {
-                name: "realName",
-                index: "real_name",
-                editable: true,
-                width: 100,
-                editrules: {
-                    required: true
-                },
-                formoptions: {label: '真实姓名<font color=\'red\'> *</font>'}
-            }, {
-                name: "password",
-                index: "password",
-                editable: true,
-                width: 80,
-                editrules: {
-                    required: true
-                },
-                formoptions: {label: '密码<font color=\'red\'> *</font>'}
-            }, {
-                name: "phone",
-                index: "phone",
-                editable: true,
-                width: 100,
-                editrules: {
-                    required: true
-                },
-                formoptions: {label: '电话<font color=\'red\'> *</font>'}
+                formoptions: {label: '角色名<font color=\'red\'> *</font>'}
             }, {
                 name: "description",
                 index: "description",
                 editable: true,
-                width: 120
+                width: 160
             }, {
                 name: "createTime",
                 index: "create_time",
                 editable: false,
                 width: 100,
                 formatter: "date"
-                // editoptions: {
-                //     dataInit : function (elem) {
-                //         $(elem).datepicker();
-                //     }
-                // }
             }, {
-                name: "createRole",
-                index: "create_role",
+                name: "createUser",
+                index: "create_user",
                 editable: false,
                 width: 100
             }, {
@@ -145,8 +115,8 @@ var role = {
                     }
                 }
             }, {
-                name: "updateRole",
-                index: "update_role",
+                name: "updateUser",
+                index: "update_user",
                 editable: false,
                 width: 100
             }, {
@@ -158,7 +128,7 @@ var role = {
             }],
             pager: "#pager_list",
             viewrecords: true,
-            caption: "用户信息管理",
+            caption: "角色信息管理",
             editurl: role.contextPath + role.editUrl,
             hidegrid: false
         });
@@ -177,13 +147,18 @@ var role = {
     naviConfig: function (data) {
         $("#role_list").jqGrid("navGrid", "#pager_list", data,
             {//edit option
+                recreateForm: true,
                 reloadAfterSubmit: true,
+                closeAfterEdit: true,
                 beforeSubmit: function (postdata, formid) {
-                    return role.checkRoleName(postdata.roleName);
+                    //主键是dom元素id+id
+                    return role.checkRoleName(postdata.roleName, postdata.role_list_id);
                 }
             },
             {//add option
+                recreateForm: true,
                 reloadAfterSubmit: true,
+                closeAfterAdd: true,
                 beforeSubmit: function (postdata, formid) {
                     return role.checkRoleName(postdata.roleName);
                 }

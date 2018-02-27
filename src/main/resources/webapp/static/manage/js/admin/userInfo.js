@@ -173,13 +173,17 @@ var user = {
     naviConfig: function (data) {
         $("#user_list").jqGrid("navGrid", "#pager_list", data,
             {//edit option
+                recreateForm: true,
                 reloadAfterSubmit: true,
+                closeAfterEdit: true,
                 beforeSubmit: function (postdata, formid) {
                     return user.checkUserName(postdata.userName);
                 }
             },
             {//add option
+                recreateForm: true,
                 reloadAfterSubmit: true,
+                closeAfterAdd: true,
                 beforeSubmit: function (postdata, formid) {
                     return user.checkUserName(postdata.userName);
                 }

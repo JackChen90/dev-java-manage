@@ -87,6 +87,7 @@ public class MenuController {
 	@RequestMapping(value = "manage")
 	public ModelAndView userRoleManage(@RequestParam Integer menuId,
 									   @RequestParam Integer type) {
+
 		ModelAndView result = new ModelAndView("admin/menuInfo");
 		result.addObject("menuId", menuId);
 		result.addObject("type", type);

@@ -1,5 +1,7 @@
 package cn.edu.njtech.manage.dto;
 
+import cn.edu.njtech.manage.domain.MenuInfo;
+import cn.edu.njtech.manage.domain.RoleInfo;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.util.Date;
@@ -55,6 +57,14 @@ public class RoleInfoDTO {
 	 * 用户描述
 	 */
 	private String description;
+
+	public String getOper() {
+		return oper;
+	}
+
+	public void setOper(String oper) {
+		this.oper = oper;
+	}
 
 	public String getId() {
 		return id;
@@ -134,5 +144,18 @@ public class RoleInfoDTO {
 				", delFlag='" + delFlag + '\'' +
 				", description='" + description + '\'' +
 				'}';
+	}
+
+	public static RoleInfo toEntity(RoleInfoDTO dto) {
+		RoleInfo roleInfo = new RoleInfo();
+		roleInfo.setId(dto.getId() == null ? null : Integer.valueOf(dto.getId()));
+		roleInfo.setRoleName(dto.getRoleName());
+		roleInfo.setDescription(dto.getDescription());
+		roleInfo.setDelFlag(dto.getDelFlag());
+		roleInfo.setCreateTime(dto.getCreateTime());
+		roleInfo.setCreateUser(dto.getCreateUser());
+		roleInfo.setUpdateTime(dto.getUpdateTime());
+		roleInfo.setUpdateUser(dto.getUpdateUser());
+		return roleInfo;
 	}
 }
