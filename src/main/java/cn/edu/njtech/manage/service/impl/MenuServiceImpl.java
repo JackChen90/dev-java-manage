@@ -118,7 +118,7 @@ public class MenuServiceImpl implements IMenuService {
 		condition.put("type", type);
 		//treeGrid默认展开
 		condition.put("expanded", true);
-		//获取用户信息
+		//获取菜单信息
 		List<MenuInfoDTO> result = menuInfoMapper.queryMenus(condition);
 		//调整结果顺序，调整数据为树形结构（子节点在父节点下面）
 		result = convertMenus(result);

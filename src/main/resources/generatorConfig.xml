@@ -74,19 +74,19 @@
 		<!--&lt;!&ndash;<generatedKey column="ID" sqlStatement="MySql"/>&ndash;&gt;-->
 		<!--</table>-->
 
-		<!--<table tableName="t_role_menu" domainObjectName="RoleMenu"-->
-		<!--enableInsert="true" enableSelectByExample="false" enableUpdateByExample="false"-->
-		<!--enableDeleteByExample="false" enableCountByExample="false">-->
-		<!--<property name="useActualColumnNames" value="false"/>-->
-		<!--<generatedKey column="ID" sqlStatement="MySql"/>-->
-		<!--</table>-->
-
-		<table tableName="t_user_role" domainObjectName="UserRoleTest"
+		<table tableName="t_role_menu" domainObjectName="RoleMenuTest"
 		enableInsert="true" enableSelectByExample="false" enableUpdateByExample="false"
 		enableDeleteByExample="false" enableCountByExample="false">
 		<property name="useActualColumnNames" value="false"/>
 		<generatedKey column="ID" sqlStatement="MySql"/>
 		</table>
+
+		<!--<table tableName="t_user_role" domainObjectName="UserRoleTest"-->
+		<!--enableInsert="true" enableSelectByExample="false" enableUpdateByExample="false"-->
+		<!--enableDeleteByExample="false" enableCountByExample="false">-->
+		<!--<property name="useActualColumnNames" value="false"/>-->
+		<!--<generatedKey column="ID" sqlStatement="MySql"/>-->
+		<!--</table>-->
 
 		<!--<table tableName="t_user_info" domainObjectName="UserInfoTest"-->
 			   <!--enableInsert="false" enableSelectByExample="false" enableUpdateByExample="false"-->
