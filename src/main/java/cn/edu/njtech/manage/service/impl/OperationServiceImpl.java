@@ -72,7 +72,7 @@ public class OperationServiceImpl implements IOperationService {
 										   List<OperationDTO> operations) {
 		OperationConstant operation = null;
 		for (MenuInfoDTO menu : menus) {
-			if (menu.getId().equals(menuId)) {
+			if (menuId.equals(Integer.parseInt(menu.getId()))) {
 				//构建操作类型实体类
 				operation = createOperation(menu.getOperation(), operations);
 				break;

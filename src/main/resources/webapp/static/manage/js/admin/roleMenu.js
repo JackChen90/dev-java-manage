@@ -1,7 +1,7 @@
 /**
  * @author jackie chen
  * @create 2018/01/29
- * @description menuInfo js
+ * @description roleMenu js
  */
 var roleMenu = {
     contextPath: null,
@@ -12,7 +12,7 @@ var roleMenu = {
     //角色信息数据url
     queryRoleInfoUrl: "/role/queryData",
     //菜单信息数据url
-    queryRoleMenuyUrl: "/role/queryMenuData",
+    queryRoleMenuUrl: "/roleMenu/queryMenuData",
     //新增/编辑/删除数据url
     editUrl: "/roleMenu/operateMenuData",
     //校验用户名不重复
@@ -114,7 +114,7 @@ var roleMenu = {
         $("#role_list").jqGrid({
             url: url,
             datatype: "json",
-            height: height - 77,
+            height: height - 116,
             autowidth: true,
             shrinkToFit: true,
             rowNum: 9999,
@@ -149,10 +149,10 @@ var roleMenu = {
             }],
             viewrecords: true,
             caption: "角色信息列表",
-            // pager: "#pager_list1",
-            // pginput: false,
-            // pgbuttons: false,
-            // recordtext: "共 {2} 条",
+            pager: "#pager_list1",
+            pginput: false,
+            pgbuttons: false,
+            recordtext: "",
             hidegrid: false,
             //事件
             onSelectRow: function (rowid, status, e) {
@@ -160,7 +160,7 @@ var roleMenu = {
                     //设置菜单grid url，触发reloadGrid
                     $("#menu_list").jqGrid('setGridParam',
                         {
-                            url: roleMenu.contextPath + roleMenu.queryRoleMenuyUrl
+                            url: roleMenu.contextPath + roleMenu.queryRoleMenuUrl
                             + '?roleId=' + rowid
                         }).trigger("reloadGrid");
                     //设置菜单grid edit url
@@ -169,7 +169,7 @@ var roleMenu = {
         });
     },
     createRoleMenuGrid: function () {
-        var url = roleMenu.contextPath + roleMenu.queryRoleMenuyUrl;
+        var url = roleMenu.contextPath + roleMenu.queryRoleMenuUrl;
         var height = $(".jqGrid_wrapper").height();
         $("#menu_list").jqGrid({
             url: url,
@@ -319,7 +319,7 @@ var roleMenu = {
                 leaf_field: "menuLeaf",
                 expanded_field: "expanded"
             },
-            caption: "菜单信息管理",
+            caption: "菜单信息",
             editurl: roleMenu.contextPath + roleMenu.editUrl + "?param=" + roleMenu.postdata,
             hidegrid: false
         });
@@ -334,94 +334,145 @@ var roleMenu = {
         roleMenu.createRoleMenuGrid();
 
         //初始化操作数据
-        // var operationUrl = roleMenu.contextPath + roleMenu.operationUrl + "?menuId=" + menuId + "&type=" + type;
-        // ajaxPostJson(operationUrl, true, {menuId: menuId, type: type}, roleMenu.naviConfig);
+        var operationUrl = roleMenu.contextPath + roleMenu.operationUrl + "?menuId=" + menuId + "&type=" + type;
+        ajaxPostJson(operationUrl, true, {menuId: menuId, type: type}, roleMenu.naviConfig);
 
         //初始化gird width，使得水平滚动条能显示
         // roleMenu.gridResizeWidth();
     },
     naviConfig: function (data) {
-        $("#menu_list").jqGrid("navGrid", "#pager_list", data,
+        $("#role_list").jqGrid("navGrid", "#pager_list1", {
+                add: false,
+                edit: false,
+                del: false,
+                search: false,
+                refresh: false
+            },
             {//edit option
                 recreateForm: true,
                 reloadAfterSubmit: true,
                 closeAfterEdit: true,
-                beforeSubmit: function (postdata, formid) {
-                    //菜单类型为目录/菜单时，控制url的disabled
-                    $('#menuLeaf', formid).change(function () {
-                        var selectvalue = $(this).val();
-                        var urlCol = $('#url', formid);
-                        urlCol.val('');
-                        if (selectvalue == true) {
-                            urlCol.removeAttr('disabled');
-                        }
-                        else {
-                            urlCol.attr('disabled', 'disabled');
-                        }
-                    });
 
-                    //校验同级菜单重名
-                    return roleMenu.checkMenuName(postdata.parentId,
-                        postdata.menuName, postdata.menu_list_id);
-                }
+                // beforeSubmit: function (postdata, formid) {
+                //     //菜单类型为目录/菜单时，控制url的disabled
+                //     $('#menuLeaf', formid).change(function () {
+                //         var selectvalue = $(this).val();
+                //         var urlCol = $('#url', formid);
+                //         urlCol.val('');
+                //         if (selectvalue == true) {
+                //             urlCol.removeAttr('disabled');
+                //         }
+                //         else {
+                //             urlCol.attr('disabled', 'disabled');
+                //         }
+                //     });
+                //
+                //     //校验同级菜单重名
+                //     return roleMenu.checkMenuName(postdata.parentId,
+                //         postdata.menuName, postdata.menu_list_id);
+                // }
             },
             {//add option
                 recreateForm: true,
                 reloadAfterSubmit: true,
                 closeAfterAdd: true,
-                beforeCheckValues: function (posdata, formid, mode) {
-                    var selectvalue = $('#menuLeaf', formid).val();
-                    //类型为"菜单"，则url与按钮操作必填；否则不必填
-                    var _menuInfo = $("#menu_list");
-                    if (selectvalue == "false") {
-                        _menuInfo.setColProp('url', {editrules: {required: false}});
-                        _menuInfo.setColProp('operationAll', {editrules: {required: false}});
-                    } else {
-                        _menuInfo.setColProp('url', {editrules: {required: true}});
-                        _menuInfo.setColProp('operationAll', {editrules: {required: true}});
-                    }
-                },
-                beforeInitData: function (formid) {//beforeInitData在form创建前执行，所以
-                    // var selectvalue = $('#menuLeaf', formid).val(); //此处有问题。此时value获取不到，得拿grid中的值
-                    // if (true) {
-                    //     $("#menu_list").setColProp('operationAll',
-                    //         {formoptions: {label: '页面按钮'}});
-                    // }else {
-                    //     $("#menu_list").setColProp('operationAll',
-                    //         {formoptions: {label: '页面按钮<font color=\'red\'> *</font>'}});
-                    // }
-                    //beforeInitData返回true/false，返回false则form不显示
-                    return true;
-                },
-                beforeShowForm: function (formid) {
-                    //菜单类型为目录/菜单时，控制url/operationAll的disabled
-                    $('#menuLeaf', formid).change(function () {
-                        var selectvalue = $(this).val();
-                        var urlCol = $('#url', formid);
-                        var operationCol = $('#operationAll', formid);
-                        urlCol.val('');
-                        if (selectvalue == "true") {
-                            urlCol.removeAttr('disabled');
-                            operationCol.removeAttr('disabled');
-                            $('label[for=url]').html('菜单链接<font color=\'red\'> *</font>');
-                            $('label[for=operationAll]').html('页面按钮<font color=\'red\'> *</font>');
-                        }
-                        else {
-                            urlCol.attr('disabled', 'disabled');
-                            operationCol.attr('disabled', 'disabled');
-                            $('label[for=url]').html('菜单链接');
-                            $('label[for=operationAll]').html('页面按钮');
-                        }
-                    });
-                },
-                beforeSubmit: function (postdata, formid) {
-                    // console.log(postdata);
-                    //校验同级菜单重名
-                    return roleMenu.checkMenuName(postdata.parentId, postdata.menuName);
-                }
+                // beforeCheckValues: function (posdata, formid, mode) {
+                //     var selectvalue = $('#menuLeaf', formid).val();
+                //     //类型为"菜单"，则url与按钮操作必填；否则不必填
+                //     var _menuInfo = $("#menu_list");
+                //     if (selectvalue == "false") {
+                //         _menuInfo.setColProp('url', {editrules: {required: false}});
+                //         _menuInfo.setColProp('operationAll', {editrules: {required: false}});
+                //     } else {
+                //         _menuInfo.setColProp('url', {editrules: {required: true}});
+                //         _menuInfo.setColProp('operationAll', {editrules: {required: true}});
+                //     }
+                // },
+                // beforeInitData: function (formid) {//beforeInitData在form创建前执行，所以
+                //     // var selectvalue = $('#menuLeaf', formid).val(); //此处有问题。此时value获取不到，得拿grid中的值
+                //     // if (true) {
+                //     //     $("#menu_list").setColProp('operationAll',
+                //     //         {formoptions: {label: '页面按钮'}});
+                //     // }else {
+                //     //     $("#menu_list").setColProp('operationAll',
+                //     //         {formoptions: {label: '页面按钮<font color=\'red\'> *</font>'}});
+                //     // }
+                //     //beforeInitData返回true/false，返回false则form不显示
+                //     return true;
+                // },
+                // beforeShowForm: function (formid) {
+                //     //菜单类型为目录/菜单时，控制url/operationAll的disabled
+                //     $('#menuLeaf', formid).change(function () {
+                //         var selectvalue = $(this).val();
+                //         var urlCol = $('#url', formid);
+                //         var operationCol = $('#operationAll', formid);
+                //         urlCol.val('');
+                //         if (selectvalue == "true") {
+                //             urlCol.removeAttr('disabled');
+                //             operationCol.removeAttr('disabled');
+                //             $('label[for=url]').html('菜单链接<font color=\'red\'> *</font>');
+                //             $('label[for=operationAll]').html('页面按钮<font color=\'red\'> *</font>');
+                //         }
+                //         else {
+                //             urlCol.attr('disabled', 'disabled');
+                //             operationCol.attr('disabled', 'disabled');
+                //             $('label[for=url]').html('菜单链接');
+                //             $('label[for=operationAll]').html('页面按钮');
+                //         }
+                //     });
+                // },
+                // beforeSubmit: function (postdata, formid) {
+                //     // console.log(postdata);
+                //     //校验同级菜单重名
+                //     return roleMenu.checkMenuName(postdata.parentId, postdata.menuName);
+                // }
             },
             {},
             {sopt: ['eq', 'ne', 'cn', 'nc']});
+
+        //增加separator
+        // $("#role_list").jqGrid('navSeparatorAdd', "#pager_list1", {
+        //     sepclass: 'ui-separator',
+        //     sepcontent: '',
+        //     position: 'first'
+        // });
+
+        //自定义button
+        if (data.del == true) {
+            $("#role_list").jqGrid("navButtonAdd", "#pager_list1", {
+                caption: "",
+                buttonicon: "glyphicon-trash",
+                onClickButton: function () {
+                    alert("Delete Row");
+                },
+                position: "first"
+            });
+        }
+        if (data.edit == true) {
+            $("#role_list").jqGrid("navButtonAdd", "#pager_list1", {
+                caption: "",
+                buttonicon: "glyphicon-edit",
+                onClickButton: function () {
+                    var selRow = $(this).jqGrid("getGridParam", "selrow");
+                    if (selRow) {
+                        layer.open({
+                            type: 2,
+                            title: '图标列表',
+                            closeBtn: 1,
+                            shadeClose: false,
+                            skin: 'layer-ext-moon',
+                            area: ['800px', '420px'],
+                            content: roleMenu.contextPath + '/roleMenu/roleMenuEdit?roleId=' + selRow
+                        })
+                    } else {
+                        // $.jgrid.viewModal("#alertmod_role_list", {toTop: true, jqm: true});
+                        $.jgrid.viewModal("#alertmod_role_list", {gbox: "#gbox_role_list", jqm: true});
+                        $("#jqg_alrt").focus();
+                    }
+                },
+                position: "first"
+            });
+        }
     },
     resize: function () {
         $(window).bind("resize", function () {
@@ -435,7 +486,7 @@ var roleMenu = {
             _role_list.setGridWidth(role_width);
             var role_height = _jqGrid_role_wrapper.height();
             _menu_list.setGridHeight(role_height - 77);
-            _role_list.setGridHeight(role_height - 77);
+            _role_list.setGridHeight(role_height - 116);
         })
     },
     gridResizeWidth: function () {

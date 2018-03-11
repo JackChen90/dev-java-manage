@@ -15,7 +15,7 @@
     <link href="${request.contextPath}/webapp/static/css/animate.min.css" rel="stylesheet">
     <link href="${request.contextPath}/webapp/static/css/style.min862f.css?v=4.1.0" rel="stylesheet">
     <link href="${request.contextPath}/webapp/static/css/plugins/jqgrid/ui.jqgridffe4.css?0820" rel="stylesheet">
-<#--<link href="${request.contextPath}/webapp/static/css/plugins/jqgrid/ui.jqgridffe4.css?0820" rel="stylesheet">-->
+    <link href="${request.contextPath}/webapp/static/css/plugins/iCheck/custom.css" rel="stylesheet">
     <style>
         .wrapper {
             height: 100%;
@@ -29,48 +29,62 @@
             height: 100%;
         }
 
+        .col-sm-9 {
+            height: 100%;
+        }
+
         .jqGrid_wrapper {
             height: 100%;
             background: white;
         }
-        /*.ibox {*/
-            /*margin-left: 15px;*/
-            /*margin-bottom: 10px;*/
-            /*clear: both;*/
-        /*}*/
+
+        .jqGrid_btn_wrapper {
+            padding-top: 6px;
+        }
+
+        .ibox {
+            margin-left: 15px;
+            margin-bottom: 10px;
+            clear: both;
+        }
     </style>
 </head>
 <body class="gray-bg">
 <div class="wrapper wrapper-content  animated fadeInRight">
-    <#--<div class="ibox">-->
-        <#--<div class="row">-->
-            <#--<div class="btnDiv">-->
-                <#--<div class="columns pull-left">-->
-                    <#--<button class="btn  btn-primary" onclick="add()" type="button">-->
-                        <#--<i aria-hidden="true" class="fa fa-plus"></i>添加-->
-                    <#--</button>-->
-                    <#--<button class="btn  btn-danger" onclick="batchRemove()" type="button">-->
-                        <#--<i aria-hidden="true" class="fa fa-trash"></i>删除-->
-                    <#--</button>-->
-                <#--</div>-->
-            <#--</div>-->
-        <#--</div>-->
-    <#--</div>-->
-    <div class="row">
-        <div class="col-sm-3">
-            <div class="jqGrid_wrapper jqGrid_role_wrapper">
-                <table id="role_list"></table>
-                <div id="pager_list1"></div>
-            </div>
-        </div>
-        <div class="col-sm-9">
-            <div class="jqGrid_wrapper jqGrid_menu_wrapper">
-                <table id="menu_list"></table>
-                <div id="pager_list2"></div>
+    <div class="ibox">
+        <div class="row">
+            <div class="btnDiv">
+                <div class="columns pull-left">
+                    <button class="btn  btn-primary" onclick="add()" type="button">
+                        <i aria-hidden="true" class="fa fa-plus"></i>保存
+                    </button>
+                    <button class="btn  btn-danger" onclick="batchRemove()" type="button">
+                        <i aria-hidden="true" class="fa fa-trash"></i>取消
+                    </button>
+                </div>
             </div>
         </div>
     </div>
-
+    <div class="row">
+        <div class="col-sm-9">
+            <div class="jqGrid_wrapper jqGrid_menu_wrapper">
+                <table id="edit_menu_list"></table>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="jqGrid_wrapper jqGrid_btn_wrapper">
+            <#--<table id="btn_list"></table>-->
+                <div class="checkbox i-checks">
+                    <label>
+                        <input type="checkbox" value=""> <i></i> 选项1</label>
+                </div>
+                <div class="checkbox i-checks">
+                    <label>
+                        <input type="checkbox" value="" checked=""> <i></i> 选项2（选中）</label>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 <script src="${request.contextPath}/webapp/static/js/jquery.min.js?v=2.1.4"></script>
 <script src="${request.contextPath}/webapp/static/manage/js/util/ajax.js"></script>
@@ -81,17 +95,18 @@
 <#--<script src="${request.contextPath}/webapp/static/js/plugins/jqgrid/jquery.jqGrid.minffe4.js?0820"></script>-->
 <script src="${request.contextPath}/webapp/static/js/plugins/jqgrid/jquery.jqGrid.js?0820"></script>
 <script src="${request.contextPath}/webapp/static/js/plugins/layer/layer.min.js?0820"></script>
+<script src="${request.contextPath}/webapp/static/js/plugins/iCheck/icheck.min.js"></script>
 <#--<script src="${request.contextPath}/webapp/static/js/plugins/datapicker/bootstrap-datepicker.js"></script>-->
-<script src="${request.contextPath}/webapp/static/manage/js/admin/roleMenu.js"></script>
+<script src="${request.contextPath}/webapp/static/manage/js/admin/roleMenuEdit.js"></script>
 
 <script>
-    var menuId = ${menuId};
-    var type =${type};
+    var roleId = ${roleId};
     $(function () {
+        $(".i-checks").iCheck({checkboxClass: "icheckbox_square-green", radioClass: "iradio_square-green"});
         $.jgrid.defaults.styleUI = "Bootstrap";
-        roleMenu.contextPath = icon.contextPath = "${request.contextPath}";
-        roleMenu.init(menuId, type);
-        roleMenu.resize();
+        roleMenuEdit.contextPath = "${request.contextPath}";
+        roleMenuEdit.init(roleId);
+        roleMenuEdit.resize();
     });
 </script>
 </body>

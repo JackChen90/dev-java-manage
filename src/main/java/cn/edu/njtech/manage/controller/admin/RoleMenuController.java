@@ -1,14 +1,12 @@
 package cn.edu.njtech.manage.controller.admin;
 
 import cn.edu.njtech.manage.constant.HandleConstant;
+import cn.edu.njtech.manage.constant.OperationConstant;
 import cn.edu.njtech.manage.dto.GridDataDTO;
 import cn.edu.njtech.manage.dto.RoleMenuDTO;
 import cn.edu.njtech.manage.dto.RoleMenuDTO;
 import cn.edu.njtech.manage.service.admin.IRoleMenuService;
-import cn.edu.njtech.manage.util.GridUtil;
-import cn.edu.njtech.manage.util.HandleResult;
-import cn.edu.njtech.manage.util.JqGrid;
-import cn.edu.njtech.manage.util.OperationUtil;
+import cn.edu.njtech.manage.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +26,7 @@ import java.util.List;
  * @description RoleMenuController
  */
 @Controller
-@RequestMapping(value = "role")
+@RequestMapping(value = "roleMenu")
 public class RoleMenuController {
 	/**
 	 * logger
@@ -75,15 +73,15 @@ public class RoleMenuController {
 	 */
 	@RequestMapping(value = "queryMenuData")
 	@ResponseBody
-	public JqGrid<RoleMenuDTO> queryRoleInfoData(GridDataDTO dto, Integer roleId) {
-		logger.info("=== queryRoleInfoData start ===," + "dto: [" + dto + "], roleId: [" + roleId + "]");
+	public JqGrid<RoleMenuDTO> queryRoleMenuData(GridDataDTO dto, Integer roleId) {
+		logger.info("=== queryRoleMenuData start ===," + "dto: [" + dto + "], roleId: [" + roleId + "]");
 		if (roleId == null) {
-			logger.info("=== queryRoleInfoData, there's no roleId ===");
+			logger.info("=== queryRoleMenuData, there's no roleId ===");
 			return new JqGrid<>();
 		}
 		HandleResult handleResult = gridUtil.judgeRequest(dto);
 		if (HandleConstant.HANDLE_FAIL.equals(handleResult.getFlag())) {
-			logger.error("=== queryRoleInfoData judgeRequest fail ===, message:{}", handleResult.getMessage());
+			logger.error("=== queryRoleMenuData judgeRequest fail ===, message:{}", handleResult.getMessage());
 			return new JqGrid<>();
 		}
 		JqGrid<RoleMenuDTO> gridData = new JqGrid<>();
@@ -97,8 +95,67 @@ public class RoleMenuController {
 		gridData.setRecords(sum);
 		gridData.setTotal(sum % dto.getRows() == 0 ? sum / dto.getRows() : sum / dto.getRows() + 1);
 		gridData.setRows(roleInfos);
-		logger.info("=== queryRoleInfoData success ===, current page:{}", dto.getPage());
+		logger.info("=== queryRoleMenuData success ===, current page:{}", dto.getPage());
 
+		return gridData;
+	}
+
+	/**
+	 * 查询用户menu页操作权限
+	 *
+	 * @param menuId menuId
+	 * @param type   menu类型
+	 * @return
+	 */
+	@RequestMapping(value = "operationData")
+	@ResponseBody
+	public JsonResponse queryOperationData(@RequestParam Integer menuId,
+										   @RequestParam Integer type) {
+		logger.info("=== queryOperationData start ===," + "menuId: [" + menuId + "], type: [" + type + "]");
+		JsonResponse jsonResponse;
+		OperationConstant operation = operationUtil.queryUserOperation(menuId, type);
+		jsonResponse = new JsonResponse(HandleConstant.HANDLE_SUCCESS, operation);
+		logger.info("=== queryOperationData success ===");
+		return jsonResponse;
+	}
+
+	/**
+	 * 编辑角色菜单页面
+	 *
+	 * @param roleId 角色id
+	 * @return
+	 */
+	@RequestMapping(value = "roleMenuEdit")
+	public ModelAndView roleMenuEdit(@RequestParam String roleId) {
+		logger.info("=== roleMenuEdit start ===," + "roleId: [" + roleId + "]");
+		ModelAndView result = new ModelAndView("admin/roleMenuEdit");
+		result.addObject("roleId", roleId);
+		logger.info("=== roleMenuEdit end ===");
+		return result;
+	}
+
+	/**
+	 * 查询用户角色菜单
+	 *
+	 * @param roleId 角色id
+	 * @return
+	 */
+	@RequestMapping(value = "queryMenuByRoleId")
+	@ResponseBody
+	public JqGrid<RoleMenuDTO> queryMenuByRoleId(@RequestParam Integer roleId) {
+		logger.info("=== queryMenuByRoleId start ===," + "roleId: [" + roleId + "]");
+		JqGrid<RoleMenuDTO> gridData = new JqGrid<>();
+		GridDataDTO emptyDto = new GridDataDTO();
+		//查询角色菜单总量
+		Integer sum = roleMenuService.queryRoleMenuCount(emptyDto, roleId);
+		//查询角色菜单列表
+		List<RoleMenuDTO> roleInfos = roleMenuService.queryRoleMenuList(emptyDto, roleId);
+		//初始化grid
+		gridData.setPage(1);
+		gridData.setRecords(sum);
+		gridData.setTotal(1);
+		gridData.setRows(roleInfos);
+		logger.info("=== queryMenuByRoleId end ===");
 		return gridData;
 	}
 }

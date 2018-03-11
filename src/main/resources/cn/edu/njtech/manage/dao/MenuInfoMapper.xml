@@ -30,7 +30,7 @@
 	<!--获取角色对应菜单列表-->
 	<select id="queryMenuByRoleId" resultMap="MenuInfoDTO">
 		SELECT
-		id,
+		mi.id,
 		parent_id,
 		menu_level,
 		menu_name,
