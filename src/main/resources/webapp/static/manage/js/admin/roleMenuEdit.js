@@ -5,23 +5,27 @@
  */
 var roleMenuEdit = {
     contextPath: null,
+    //所有操作权限
+    allOperation: null,
     //菜单信息数据url
     queryRoleMenuUrl: "/roleMenu/queryMenuByRoleId",
     //保存角色菜单url
     saveRoleMenuUrl: "/roleMenu/saveRoleMenu",
-    convertDel: function (cellvalue, options, rowObject) {
-        var newCellValue = null;
-        switch (cellvalue) {
-            case "0":
-            default:
-                newCellValue = "<font color='green'>正常</font>";
-                break;
-            case "1":
-                newCellValue = "<font color='red'>停用</font>";
-                break;
-        }
-        return newCellValue;
-    },
+    //操作字典url
+    operationMapUrl: "/operation/allOperation",
+    // convertDel: function (cellvalue, options, rowObject) {
+    //     var newCellValue = null;
+    //     switch (cellvalue) {
+    //         case "0":
+    //         default:
+    //             newCellValue = "<font color='green'>正常</font>";
+    //             break;
+    //         case "1":
+    //             newCellValue = "<font color='red'>停用</font>";
+    //             break;
+    //     }
+    //     return newCellValue;
+    // },
     convertCategory: function (flag) {
         //true为叶节点
         if (flag) {
@@ -30,6 +34,30 @@ var roleMenuEdit = {
             return "<span class=\"label label-primary\">目录</span>";
         }
     },
+    convertOperation: function (cellvalue) {
+        var result = '';
+        for (var i = 0; i < roleMenuEdit.allOperation.length; i++) {
+            //页面操作与操作表每个操作的id做与运算，为0则不具备该操作权限
+            if ((roleMenuEdit.allOperation[i].id & cellvalue) > 0) {
+                result += '<span class="label ' + getLabelClass(roleMenuEdit.allOperation[i].id)
+                    + '">' + roleMenuEdit.allOperation[i].description + '</span> ';
+            }
+        }
+        return result;
+    },
+    // operationToStr: function (cellvalue, options, cell) {
+    //     var result = '';
+    //     var cells = cellvalue.split("/");
+    //     for (var j = 0; j < cells.length; j++) {
+    //         for (var i = 0; i < roleMenu.allOperation.length; i++) {
+    //             //页面操作与操作表每个操作的id做与运算，为0则不具备该操作权限
+    //             if (roleMenu.allOperation[i].description == cells[j]) {
+    //                 result += roleMenu.allOperation[i].id + ",";
+    //             }
+    //         }
+    //     }
+    //     return result.substr(0, result.length - 1);
+    // },
     createRoleMenuGrid: function (roleId) {
         var url = roleMenuEdit.contextPath + roleMenuEdit.queryRoleMenuUrl + "?roleId=" + roleId;
         var height = $($(".jqGrid_wrapper")[0]).height();
@@ -51,7 +79,7 @@ var roleMenuEdit = {
                 }
             },
             // jsonReader: { repeatitems: false, root: function (obj) { return obj; } },
-            colNames: ["id", "菜单名称", "type", "分类", "菜单链接", "页面按钮", "状态"],
+            colNames: ["id", "菜单名称", "type", "分类", "菜单链接", "页面按钮"],
             colModel: [{
                 name: "id",
                 index: "id",
@@ -64,7 +92,7 @@ var roleMenuEdit = {
                 index: "menu_name",
                 sortable: false,
                 editable: true,
-                width: 140,
+                width: 130,
                 editrules: {
                     required: true
                 },
@@ -97,7 +125,7 @@ var roleMenuEdit = {
                 editrules: {
                     required: true
                 },
-                width: 180
+                width: 140
             }, {
                 name: "operationAll",
                 index: "operation_all",
@@ -112,17 +140,19 @@ var roleMenuEdit = {
                 //     size: 5,
                 //     value: roleMenu.getAllOperation
                 // },
-                // width: 180,
-                // formatter: roleMenu.convertOperation,
+                width: 200,
+                formatter: roleMenuEdit.convertOperation,
                 // unformat: roleMenu.operationToStr,
                 // formoptions: {label: '页面按钮<font color=\'red\'> *</font>'}
-            }, {
-                name: "delFlag",
-                index: "del_flag",
-                editable: false,
-                width: 60,
-                formatter: roleMenuEdit.convertDel
-            }],
+            }
+                // , {
+                //     name: "delFlag",
+                //     index: "del_flag",
+                //     editable: false,
+                //     width: 60,
+                //     formatter: roleMenuEdit.convertDel
+                // }
+            ],
             // pager: "#pager_list2",
             sortname: 'id',
             sortorder: "asc",
@@ -141,7 +171,14 @@ var roleMenuEdit = {
             hidegrid: false
         });
     },
+    initAllOperation: function (data) {
+        roleMenuEdit.allOperation = data;
+    },
     init: function (roleId) {
+        //查询所有操作列表
+        var operationMapUrl = roleMenuEdit.contextPath + roleMenuEdit.operationMapUrl;
+        ajaxPostJson(operationMapUrl, false, null, roleMenuEdit.initAllOperation);
+
         //初始化菜单数据
         roleMenuEdit.createRoleMenuGrid(roleId);
 

@@ -55,17 +55,17 @@
         <div class="row">
             <div class="btnDiv">
                 <div class="columns pull-left">
-                    <button class="btn  btn-primary" onclick="add()" type="button">
+                    <button class="btn  btn-primary" onclick="roleMenuEdit.save()" type="button">
                         <i aria-hidden="true" class="fa fa-plus"></i>保存
                     </button>
-                    <button class="btn  btn-danger" onclick="batchRemove()" type="button">
+                    <button class="btn  btn-danger" onclick="roleMenuEdit.cancel()" type="button">
                         <i aria-hidden="true" class="fa fa-trash"></i>取消
                     </button>
                 </div>
             </div>
         </div>
     </div>
-    <div class="row">
+    <div class="row row2">
         <div class="col-sm-9">
             <div class="jqGrid_wrapper jqGrid_menu_wrapper">
                 <table id="edit_menu_list"></table>
@@ -88,6 +88,7 @@
 </div>
 <script src="${request.contextPath}/webapp/static/js/jquery.min.js?v=2.1.4"></script>
 <script src="${request.contextPath}/webapp/static/manage/js/util/ajax.js"></script>
+<script src="${request.contextPath}/webapp/static/manage/js/util/labelUtil.js"></script>
 <script src="${request.contextPath}/webapp/static/manage/js/icon.js"></script>
 <script src="${request.contextPath}/webapp/static/js/bootstrap.min.js?v=3.3.6"></script>
 <script src="${request.contextPath}/webapp/static/js/plugins/peity/jquery.peity.min.js"></script>
@@ -103,6 +104,9 @@
     var roleId = ${roleId};
     $(function () {
         $(".i-checks").iCheck({checkboxClass: "icheckbox_square-green", radioClass: "iradio_square-green"});
+        //设置gird row高度
+        var _row = $(".row2");
+        _row.height(_row.parent().height() - 44);
         $.jgrid.defaults.styleUI = "Bootstrap";
         roleMenuEdit.contextPath = "${request.contextPath}";
         roleMenuEdit.init(roleId);

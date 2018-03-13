@@ -457,11 +457,11 @@ var roleMenu = {
                     if (selRow) {
                         layer.open({
                             type: 2,
-                            title: '图标列表',
+                            title: '角色权限编辑',
                             closeBtn: 1,
                             shadeClose: false,
                             skin: 'layer-ext-moon',
-                            area: ['800px', '420px'],
+                            area: ['900px', '420px'],
                             content: roleMenu.contextPath + '/roleMenu/roleMenuEdit?roleId=' + selRow
                         })
                     } else {
