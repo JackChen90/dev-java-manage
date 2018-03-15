@@ -145,11 +145,10 @@ public class RoleMenuController {
 	public JqGrid<RoleMenuDTO> queryMenuByRoleId(@RequestParam Integer roleId) {
 		logger.info("=== queryMenuByRoleId start ===," + "roleId: [" + roleId + "]");
 		JqGrid<RoleMenuDTO> gridData = new JqGrid<>();
-		GridDataDTO emptyDto = new GridDataDTO();
-		//查询角色菜单总量
-		Integer sum = roleMenuService.queryRoleMenuCount(emptyDto, roleId);
+		//查询菜单总量
+		Integer sum = roleMenuService.queryEditRoleMenuCount();
 		//查询角色菜单列表
-		List<RoleMenuDTO> roleInfos = roleMenuService.queryRoleMenuList(emptyDto, roleId);
+		List<RoleMenuDTO> roleInfos = roleMenuService.queryEditRoleMenuList(roleId);
 		//初始化grid
 		gridData.setPage(1);
 		gridData.setRecords(sum);

@@ -30,6 +30,11 @@ public class RoleMenuDTO {
 	private Integer roleId;
 
 	/**
+	 * 是否有权限
+	 */
+	private Boolean hasRole;
+
+	/**
 	 * 菜单id
 	 */
 	private Integer menuId;
@@ -106,6 +111,7 @@ public class RoleMenuDTO {
 				", id=" + id +
 				", parentId=" + parentId +
 				", roleId=" + roleId +
+				", hasRole=" + hasRole +
 				", menuId=" + menuId +
 				", menuLevel=" + menuLevel +
 				", menuName='" + menuName + '\'' +
@@ -209,6 +215,14 @@ public class RoleMenuDTO {
 
 	public void setRoleId(Integer roleId) {
 		this.roleId = roleId;
+	}
+
+	public Boolean getHasRole() {
+		return hasRole;
+	}
+
+	public void setHasRole(Boolean hasRole) {
+		this.hasRole = hasRole;
 	}
 
 	public Integer getMenuId() {

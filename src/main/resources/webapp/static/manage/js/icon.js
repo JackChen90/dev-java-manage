@@ -22,7 +22,7 @@ var icon = {
             ' value="' + value + '"' +
             ' placeholder="例如：fa fa-circle-o">\n' +
             '<input id="ico-btn" style="width: 100px;"  class="btn btn-warning fontInput" type="button" value="选择图标">\n' +
-            '<span style="clear:both"></span>'
+            '<span style="clear:both"></span>'+
             '</div>\n';
         //通过jquery返回自定义元素
         return $(elemStr)[0];

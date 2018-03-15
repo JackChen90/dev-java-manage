@@ -1,5 +1,6 @@
 package cn.edu.njtech.manage.service.admin.impl;
 
+import cn.edu.njtech.manage.dao.MenuInfoMapper;
 import cn.edu.njtech.manage.dao.RoleMenuMapper;
 import cn.edu.njtech.manage.dto.GridDataDTO;
 import cn.edu.njtech.manage.dto.RoleMenuDTO;
@@ -33,6 +34,9 @@ public class RoleMenuServiceImpl implements IRoleMenuService {
 
 	@Autowired
 	private RoleMenuMapper roleMenuMapper;
+
+	@Autowired
+	private MenuInfoMapper menuInfoMapper;
 
 	@Override
 	public Integer queryRoleMenuCount(GridDataDTO dto, Integer roleId) {
@@ -77,6 +81,40 @@ public class RoleMenuServiceImpl implements IRoleMenuService {
 		//调整结果顺序，调整数据为树形结构（子节点在父节点下面）
 		result = convertMenus(result);
 		logger.info("=== queryRoleMenu success ===, result size:{}", result == null ? null : result.size());
+		return result;
+	}
+
+	@Override
+	public Integer queryEditRoleMenuCount() {
+		logger.info("=== queryEditRoleMenuCount start ===");
+		Map<String, Object> condition = new HashMap<>(16);
+		int type = 1;
+		condition.put("menuType", type);
+		if (logger.isDebugEnabled()) {
+			logger.debug("=== queryEditRoleMenuCount condition ===, condition:{}", condition);
+		}
+		//查询角色菜单数量
+		Integer count = menuInfoMapper.queryMenuInfoCount(condition);
+		logger.info("=== queryEditRoleMenuCount success ===, count:{}", count);
+		return count;
+	}
+
+	@Override
+	public List<RoleMenuDTO> queryEditRoleMenuList(Integer roleId) {
+		logger.info("=== queryEditRoleMenuList start ===," + "roleId: [" + roleId + "]");
+		Map<String, Object> condition = new HashMap<>(16);
+		if (roleId != null) {
+			condition.put("roleId", roleId);
+		}
+		int type = 1;
+		condition.put("type", type);
+		//treeGrid默认展开
+		condition.put("expanded", true);
+		//获取角色菜单信息
+		List<RoleMenuDTO> result = roleMenuMapper.queryEditRoleMenu(condition);
+		//调整结果顺序，调整数据为树形结构（子节点在父节点下面）
+		result = convertMenus(result);
+		logger.info("=== queryEditRoleMenuList success ===, result size:{}", result == null ? null : result.size());
 		return result;
 	}
 

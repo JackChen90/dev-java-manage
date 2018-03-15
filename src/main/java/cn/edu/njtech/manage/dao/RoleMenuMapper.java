@@ -28,4 +28,12 @@ public interface RoleMenuMapper {
 	 * @return
 	 */
 	List<RoleMenuDTO> queryRoleMenu(Map<String, Object> condition);
+
+	/**
+	 * 查询编辑页面角色菜单列表 (所有菜单，hasRole字段标记有权限的菜单)
+	 *
+	 * @param condition 条件
+	 * @return
+	 */
+	List<RoleMenuDTO> queryEditRoleMenu(Map<String, Object> condition);
 }

@@ -29,4 +29,19 @@ public interface IRoleMenuService {
 	 * @return
 	 */
 	List<RoleMenuDTO> queryRoleMenuList(GridDataDTO dto, Integer roleId);
+
+	/**
+	 * 获取编辑页面角色按钮记录条数(所有菜单，hasRole字段标记有权限的菜单)
+	 *
+	 * @return
+	 */
+	Integer queryEditRoleMenuCount();
+
+	/**
+	 * 查询编辑页面角色菜单列表 (所有菜单，hasRole字段标记有权限的菜单)
+	 *
+	 * @param roleId 角色id
+	 * @return
+	 */
+	List<RoleMenuDTO> queryEditRoleMenuList(Integer roleId);
 }

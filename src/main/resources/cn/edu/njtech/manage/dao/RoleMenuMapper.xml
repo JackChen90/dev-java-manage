@@ -5,6 +5,7 @@
 		<id column="id" jdbcType="INTEGER" property="id" />
 		<result column="parent_id" jdbcType="INTEGER" property="parentId"/>
 		<result column="role_id" jdbcType="INTEGER" property="roleId" />
+		<result column="has_role" jdbcType="BOOLEAN" property="hasRole" />
 		<result column="menu_id" jdbcType="INTEGER" property="menuId" />
 		<result column="menu_level" jdbcType="DECIMAL" property="menuLevel"/>
 		<result column="menu_name" jdbcType="VARCHAR" property="menuName"/>
@@ -43,7 +44,7 @@
 	<!--查询角色菜单列表-->
 	<select id="queryRoleMenu" resultMap="roleMenuDTO">
 		SELECT
-		trm.id,
+		tmi.id,
 		CASE tmi.parent_id
 		WHEN -1 THEN NULL
 		ELSE tmi.parent_id
@@ -76,6 +77,65 @@
 			</if>
 			<if test="roleId != null">
 				and trm.role_id = #{roleId}
+			</if>
+			and tmi.menu_type = #{type,jdbcType=INTEGER}
+			AND tmi.del_flag = 0
+		</trim>
+		<choose>
+			<when test="orderStr != null">
+				${orderStr}
+			</when>
+			<otherwise>
+				ORDER BY tmi.parent_id, tmi.sort_order
+			</otherwise>
+		</choose>
+	</select>
+
+	<!--查询编辑页面所有权限数据-->
+	<select id="queryEditRoleMenu" resultMap="roleMenuDTO">
+		SELECT
+		tmi.id,
+		CASE tmi.parent_id
+		WHEN -1 THEN NULL
+		ELSE tmi.parent_id
+		END AS parent_id,
+		CASE WHEN trm.role_id IS null THEN false
+		ELSE true
+		END AS has_role,
+		tmi.id as menu_id,
+		tmi.menu_name,
+		tmi.menu_level -1 as menu_level,
+		tmi.icon,
+		tmi.url,
+		CASE WHEN tmi.url is NULL THEN false
+		WHEN tmi.url ='' THEN false
+		ELSE true END as menu_leaf,
+		trm.operation,
+		tmi.sort_order,
+		tmi.operation_all,
+		<choose>
+			<when test="expanded">
+				true AS expanded
+			</when>
+			<otherwise>
+				false AS expanded
+			</otherwise>
+		</choose>
+		FROM
+		(SELECT
+		*
+		FROM
+		t_role_menu
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="roleId != null">
+				and role_id = #{roleId}
+			</if>
+		</trim>) AS trm
+		LEFT JOIN t_role_info tri ON tri.id = trm.role_id
+		RIGHT JOIN t_menu_info tmi ON tmi.id = trm.menu_id
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="searchStr != null">
+				and ${searchStr}
 			</if>
 			and tmi.menu_type = #{type,jdbcType=INTEGER}
 			AND tmi.del_flag = 0

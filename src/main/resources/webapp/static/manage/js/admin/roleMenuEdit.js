@@ -4,7 +4,10 @@
  * @description roleMenuEdit js
  */
 var roleMenuEdit = {
+    //环境根路径
     contextPath: null,
+    //角色菜单前端保存的实时数据(数组对象)
+    roleMenuData: [],
     //所有操作权限
     allOperation: null,
     //菜单信息数据url
@@ -58,6 +61,14 @@ var roleMenuEdit = {
     //     }
     //     return result.substr(0, result.length - 1);
     // },
+    convertCheck: function (flag) {
+        //true为有权限
+        if (flag) {
+            return "<input type=\"checkbox\" checked=\"checked\" value=\"1\" offval=\"no\">";
+        } else {
+            return "<input type=\"checkbox\" value=\"0\" offval=\"no\">";
+        }
+    },
     createRoleMenuGrid: function (roleId) {
         var url = roleMenuEdit.contextPath + roleMenuEdit.queryRoleMenuUrl + "?roleId=" + roleId;
         var height = $($(".jqGrid_wrapper")[0]).height();
@@ -70,6 +81,7 @@ var roleMenuEdit = {
             shrinkToFit: true,
             // autoScroll: false,
             // forceFit: true,
+            // multiselect: true,//复选框 tree grid 下失效
             //表格json数据
             jsonReader: {
                 repeatitems: false,
@@ -79,8 +91,15 @@ var roleMenuEdit = {
                 }
             },
             // jsonReader: { repeatitems: false, root: function (obj) { return obj; } },
-            colNames: ["id", "菜单名称", "type", "分类", "菜单链接", "页面按钮"],
+            colNames: ["", "id", "菜单名称", "type", "分类", "菜单链接", "页面按钮"],
             colModel: [{
+                name: "hasRole",
+                index: "hasRole",
+                width: 20,
+                editable: false,
+                formatter: roleMenuEdit.convertCheck,
+                // unformat: roleMenuEdit.revertCheck
+            }, {
                 name: "id",
                 index: "id",
                 width: 60,
@@ -168,7 +187,49 @@ var roleMenuEdit = {
                 expanded_field: "expanded"
             },
             caption: "菜单信息",
-            hidegrid: false
+            hidegrid: false,
+            //事件
+            onSelectRow: function (rowid, status, e) {
+                var checkboxs = '';
+                var checked = 'checked';
+                if (rowid) {
+                    for (var i = 0; i < roleMenuEdit.roleMenuData.length; i++) {
+                        if (rowid == roleMenuEdit.roleMenuData[i].id) {
+                            for (var j = 0; j < roleMenuEdit.allOperation.length; j++) {
+                                if ((roleMenuEdit.allOperation[j].id & roleMenuEdit.roleMenuData[i].operationAll) > 0) {
+                                    checkboxs += '<div class="checkbox checkbox-success">\n' +
+                                        '                    <input id="' + rowid + "_" + roleMenuEdit.allOperation[j].id + '" class="styled" type="checkbox"';
+                                    if ((roleMenuEdit.allOperation[j].id & roleMenuEdit.roleMenuData[i].operation) > 0) {
+                                        checkboxs += ' checked';
+                                    }
+                                    checkboxs += '>\n';
+                                    checkboxs += '                    <label class="btn-checkbox" for="' + rowid + "_" + roleMenuEdit.allOperation[j].id + '">\n';
+                                    checkboxs += roleMenuEdit.allOperation[j].description;
+                                    checkboxs += '                        \n' +
+                                        '                    </label>\n' +
+                                        '                </div>';
+                                }
+                            }
+                            $('.jqGrid_btn_wrapper').html(checkboxs);
+                            break;
+                        }
+                    }
+                }
+            },
+            loadComplete: function (data) {
+                //存储本地rolemenu data
+                var rows = data.rows;
+                if (rows) {
+                    for (var i = 0; i < rows.length; i++) {
+                        roleMenuEdit.roleMenuData[i] = new Object();
+                        roleMenuEdit.roleMenuData[i].id = rows[i].id;
+                        roleMenuEdit.roleMenuData[i].hasRole = rows[i].hasRole;
+                        roleMenuEdit.roleMenuData[i].operation = rows[i].operation;
+                        roleMenuEdit.roleMenuData[i].operationAll = rows[i].operationAll;
+                    }
+                }
+                console.log(roleMenuEdit.roleMenuData);
+            }
         });
     },
     initAllOperation: function (data) {
@@ -188,6 +249,16 @@ var roleMenuEdit = {
 
         //初始化gird width，使得水平滚动条能显示
         // roleMenu.gridResizeWidth();
+
+        $('.jqGrid_btn_wrapper').on('click', '.btn-checkbox', function () {
+            //todo 处理按钮点击
+            // alert($(this).text() + "===" + $(this).html())
+            // if ($(':after', $(this))) {
+            //     console.log($(':after', $(this)))
+            //     console.log($(':after', $(this)))
+            //     console.log($(':after', $(this)).text())
+            // }
+        });
     },
     resize: function () {
         $(window).bind("resize", function () {

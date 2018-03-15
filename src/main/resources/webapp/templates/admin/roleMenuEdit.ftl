@@ -16,6 +16,7 @@
     <link href="${request.contextPath}/webapp/static/css/style.min862f.css?v=4.1.0" rel="stylesheet">
     <link href="${request.contextPath}/webapp/static/css/plugins/jqgrid/ui.jqgridffe4.css?0820" rel="stylesheet">
     <link href="${request.contextPath}/webapp/static/css/plugins/iCheck/custom.css" rel="stylesheet">
+    <link href="${request.contextPath}/webapp/static/css/custom/build.css" rel="stylesheet">
     <style>
         .wrapper {
             height: 100%;
@@ -39,6 +40,7 @@
         }
 
         .jqGrid_btn_wrapper {
+            padding-left: 10px;
             padding-top: 6px;
         }
 
@@ -74,13 +76,11 @@
         <div class="col-sm-3">
             <div class="jqGrid_wrapper jqGrid_btn_wrapper">
             <#--<table id="btn_list"></table>-->
-                <div class="checkbox i-checks">
-                    <label>
-                        <input type="checkbox" value=""> <i></i> 选项1</label>
-                </div>
-                <div class="checkbox i-checks">
-                    <label>
-                        <input type="checkbox" value="" checked=""> <i></i> 选项2（选中）</label>
+                <div class="checkbox checkbox-success">
+                    <input id="checkbox3" class="styled" type="checkbox">
+                    <label for="checkbox3">
+                        Success
+                    </label>
                 </div>
             </div>
         </div>
