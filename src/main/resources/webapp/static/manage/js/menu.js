@@ -67,7 +67,7 @@ function createMenu(data) {
                 + "&type=" + 1
                 + "\">";
         }
-        result += "<i class=\"fa fa-columns\"></i>" +
+        result += "<i class=\"" + item.menuIcon + "\"></i>" +
             " <span class=\"nav-label\">" + item.menuName + "</span>";
         result += " <span class=\"fa " + (item.children ? 'arrow' : '') + "\"></span></a>";
 

@@ -1,15 +1,19 @@
 package cn.edu.njtech.manage.controller.admin;
 
+import cn.edu.njtech.manage.constant.ErrorCode;
 import cn.edu.njtech.manage.constant.HandleConstant;
 import cn.edu.njtech.manage.constant.OperationConstant;
 import cn.edu.njtech.manage.dto.GridDataDTO;
 import cn.edu.njtech.manage.dto.RoleMenuDTO;
 import cn.edu.njtech.manage.dto.RoleMenuDTO;
+import cn.edu.njtech.manage.dto.request.RoleMenuRequest;
 import cn.edu.njtech.manage.service.admin.IRoleMenuService;
 import cn.edu.njtech.manage.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -156,5 +160,68 @@ public class RoleMenuController {
 		gridData.setRows(roleInfos);
 		logger.info("=== queryMenuByRoleId end ===");
 		return gridData;
+	}
+
+	/**
+	 * 保存角色-菜单数据
+	 *
+	 * @param request 入参
+	 * @return
+	 */
+	@RequestMapping(value = "batchSaveRoleMenu")
+	@ResponseBody
+	public JsonResponse saveRoleMenu(RoleMenuRequest request) {
+		logger.info("=== batchSaveRoleMenu start ===," + "request: [" + request + "]");
+		JsonResponse jsonResponse = null;
+		HandleResult handleResult = judgeRequest(request);
+		if (!handleResult.getFlag()) {
+			logger.error("=== batchSaveRoleMenu error ===, msg:{}", handleResult.getMessage());
+			return new JsonResponse(HandleConstant.HANDLE_FAIL, ErrorCode.WRONG_PARAM, handleResult.getMessage());
+		}
+		Boolean flag = roleMenuService.saveRoleMenuData(request);
+		logger.info("=== batchSaveRoleMenu end ===, result:{}", flag);
+		if (flag) {
+			return new JsonResponse(HandleConstant.HANDLE_SUCCESS);
+		} else {
+			return new JsonResponse(HandleConstant.HANDLE_FAIL);
+		}
+	}
+
+	/**
+	 * 校验入参
+	 *
+	 * @param request 入参
+	 * @return
+	 */
+	private HandleResult judgeRequest(RoleMenuRequest request) {
+		HandleResult result = null;
+		//request不为空
+		if (request == null) {
+			result = new HandleResult(false, "request is empty");
+			return result;
+		}
+
+		//roleId不为空
+		if (request.getRoleId() == null) {
+			result = new HandleResult(false, "request.roleId is empty");
+			return result;
+		}
+
+		//data不为空时，判断id，hasRole字段不为空
+		if (request.getData() != null) {
+			for (RoleMenuRequest.RoleMenuData data :
+					request.getData()) {
+				if (data.getId() == null) {
+					result = new HandleResult(false, "request.data array is not valid, missing id");
+					return result;
+				}
+				if (data.getHasRole() == null) {
+					result = new HandleResult(false, "request.data array is not valid, missing hasRole");
+					return result;
+				}
+			}
+		}
+		result = new HandleResult(true);
+		return result;
 	}
 }

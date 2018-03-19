@@ -3,6 +3,7 @@ package cn.edu.njtech.manage.service.admin;
 import cn.edu.njtech.manage.dto.GridDataDTO;
 import cn.edu.njtech.manage.dto.RoleInfoDTO;
 import cn.edu.njtech.manage.dto.RoleMenuDTO;
+import cn.edu.njtech.manage.dto.request.RoleMenuRequest;
 
 import java.util.List;
 
@@ -44,4 +45,12 @@ public interface IRoleMenuService {
 	 * @return
 	 */
 	List<RoleMenuDTO> queryEditRoleMenuList(Integer roleId);
+
+	/**
+	 * 保存用户角色菜单权限信息
+	 *
+	 * @param request 入参，用户角色菜单信息
+	 * @return
+	 */
+	Boolean saveRoleMenuData(RoleMenuRequest request);
 }

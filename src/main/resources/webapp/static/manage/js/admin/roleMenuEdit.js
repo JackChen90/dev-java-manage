@@ -29,6 +29,24 @@ var roleMenuEdit = {
     //     }
     //     return newCellValue;
     // },
+    refreshGrid: function () {
+
+    },
+    save: function () {//页面"保存"按钮点击事件
+        // var obj = $("#edit_menu_list").jqGrid("getRowData");
+        // alert(obj.length);
+        // console.log(obj);
+        var data = {};
+        data.roleId = roleMenuEdit.roleId;
+        data.data = roleMenuEdit.roleMenuData;
+        var path = roleMenuEdit.contextPath + roleMenuEdit.saveRoleMenuUrl;
+        //todo 获取所有选中行，以及btn数据
+        ajaxPostJson(path, false, data, roleMenuEdit.refreshGrid);
+    },
+    cancel: function () {//页面"取消"按钮点击事件
+        var index = parent.layer.getFrameIndex(window.name);
+        parent.layer.close(index);
+    },
     convertCategory: function (flag) {
         //true为叶节点
         if (flag) {
@@ -64,10 +82,13 @@ var roleMenuEdit = {
     convertCheck: function (flag) {
         //true为有权限
         if (flag) {
-            return "<input type=\"checkbox\" checked=\"checked\" value=\"1\" offval=\"no\">";
+            return "<input class='menuCheck' type=\"checkbox\" checked=\"checked\" value=\"1\" offval=\"no\">";
         } else {
-            return "<input type=\"checkbox\" value=\"0\" offval=\"no\">";
+            return "<input class='menuCheck' type=\"checkbox\" value=\"0\" offval=\"no\">";
         }
+    },
+    revertCheck: function (cellvalue, options, cell) {
+        return $('.menuCheck', cell).val();
     },
     createRoleMenuGrid: function (roleId) {
         var url = roleMenuEdit.contextPath + roleMenuEdit.queryRoleMenuUrl + "?roleId=" + roleId;
@@ -98,7 +119,7 @@ var roleMenuEdit = {
                 width: 20,
                 editable: false,
                 formatter: roleMenuEdit.convertCheck,
-                // unformat: roleMenuEdit.revertCheck
+                unformat: roleMenuEdit.revertCheck
             }, {
                 name: "id",
                 index: "id",
@@ -188,6 +209,24 @@ var roleMenuEdit = {
             },
             caption: "菜单信息",
             hidegrid: false,
+            beforeSelectRow: function (rowid, e) {
+                var iCol = $.jgrid.getCellIndex($(e.target).closest("td")[0]);
+                var cm = $(this).jqGrid("getGridParam", "colModel");
+                if (cm[iCol].name === "hasRole") {
+                    for (var i = 0; i < roleMenuEdit.roleMenuData.length; i++) {
+                        if (roleMenuEdit.roleMenuData[i].id == rowid) {
+                            //设置页面权限
+                            roleMenuEdit.roleMenuData[i].hasRole = $(e.target).prop('checked');
+                            console.log(rowid);
+                            console.log(roleMenuEdit.roleMenuData[i].hasRole);
+                        }
+                    }
+                }
+                // console.log(cm[iCol].name);
+                // console.log(rowid);
+                // console.log($(e.target).prop('checked'));
+                // alert($(e.target).is(":checked")); //此方法也可选出是否选中
+            },
             //事件
             onSelectRow: function (rowid, status, e) {
                 var checkboxs = '';
@@ -198,12 +237,12 @@ var roleMenuEdit = {
                             for (var j = 0; j < roleMenuEdit.allOperation.length; j++) {
                                 if ((roleMenuEdit.allOperation[j].id & roleMenuEdit.roleMenuData[i].operationAll) > 0) {
                                     checkboxs += '<div class="checkbox checkbox-success">\n' +
-                                        '                    <input id="' + rowid + "_" + roleMenuEdit.allOperation[j].id + '" class="styled" type="checkbox"';
+                                        '                    <input id="' + rowid + "_" + roleMenuEdit.allOperation[j].id + '" class="styled  btn-checkbox" type="checkbox"';
                                     if ((roleMenuEdit.allOperation[j].id & roleMenuEdit.roleMenuData[i].operation) > 0) {
                                         checkboxs += ' checked';
                                     }
                                     checkboxs += '>\n';
-                                    checkboxs += '                    <label class="btn-checkbox" for="' + rowid + "_" + roleMenuEdit.allOperation[j].id + '">\n';
+                                    checkboxs += '                    <label for="' + rowid + "_" + roleMenuEdit.allOperation[j].id + '">\n';
                                     checkboxs += roleMenuEdit.allOperation[j].description;
                                     checkboxs += '                        \n' +
                                         '                    </label>\n' +
@@ -229,6 +268,16 @@ var roleMenuEdit = {
                     }
                 }
                 console.log(roleMenuEdit.roleMenuData);
+
+                //绑定checkbox点击事件
+                // $('#edit_menu_list').on('change','.menuCheck',function () {
+                //     alert($(this).prop('checked'));
+                //     if ($(this).prop('checked')){
+                //         $(this).val(1);
+                //     }else {
+                //         $(this).val(0);
+                //     }
+                // });
             }
         });
     },
@@ -236,6 +285,7 @@ var roleMenuEdit = {
         roleMenuEdit.allOperation = data;
     },
     init: function (roleId) {
+        roleMenuEdit.roleId = roleId;
         //查询所有操作列表
         var operationMapUrl = roleMenuEdit.contextPath + roleMenuEdit.operationMapUrl;
         ajaxPostJson(operationMapUrl, false, null, roleMenuEdit.initAllOperation);
@@ -251,14 +301,26 @@ var roleMenuEdit = {
         // roleMenu.gridResizeWidth();
 
         $('.jqGrid_btn_wrapper').on('click', '.btn-checkbox', function () {
-            //todo 处理按钮点击
-            // alert($(this).text() + "===" + $(this).html())
-            // if ($(':after', $(this))) {
-            //     console.log($(':after', $(this)))
-            //     console.log($(':after', $(this)))
-            //     console.log($(':after', $(this)).text())
-            // }
+            var id = $(this).attr('id');
+            var ids = id.split('_');
+            var menuId = ids[0];
+            var op = new Number(ids[1]);
+            alert($(this).prop('checked'));
+
+            for (var i = 0; i < roleMenuEdit.roleMenuData.length; i++) {
+                if (roleMenuEdit.roleMenuData[i].id == menuId) {
+                    //如有页面权限，则对按钮权限做增删（number类型加减），选中为增，不选中为减
+                    if (roleMenuEdit.roleMenuData[i].hasRole) {
+                        if ($(this).prop('checked')) {
+                            roleMenuEdit.roleMenuData[i].operation += op;
+                        } else {
+                            roleMenuEdit.roleMenuData[i].operation -= op;
+                        }
+                    }
+                }
+            }
         });
+
     },
     resize: function () {
         $(window).bind("resize", function () {

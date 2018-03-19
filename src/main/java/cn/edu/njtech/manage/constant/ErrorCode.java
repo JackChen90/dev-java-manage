@@ -8,32 +8,32 @@ package cn.edu.njtech.manage.constant;
 public final class ErrorCode {
 
 	/**
-	 * ³É¹¦Âë
+	 * æˆåŠŸç 
 	 */
 	public static final Integer SUCCESS = 1;
 
 	/**
-	 * Èë²Î´íÎó
+	 * å…¥å‚é”™è¯¯
 	 */
 	public static final Integer WRONG_PARAM = 12;
 
 	/**
-	 * ÏµÍ³´íÎó
+	 * ç³»ç»Ÿé”™è¯¯
 	 */
 	public static final Integer SYSTEM_FAULT = -999;
 
 	/**
-	 * Sql´íÎó
+	 * Sqlé”™è¯¯
 	 */
 	public static final Integer SQL_ERROR = 201;
 
 	/**
-	 * ³¬Ê±
+	 * è¶…æ—¶
 	 */
 	public static final Integer TOKEN_EXPIRE_ERROR = 600;
 
 	/**
-	 * ³¬¹ı´ÎÊı
+	 * è¶…è¿‡æ¬¡æ•°
 	 */
 	public static final Integer TOKEN_CALL_EXCEED_ERROR = 601;
 }

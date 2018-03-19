@@ -22,7 +22,9 @@
     <link href="${request.contextPath}/webapp/static/css/custom/home.css" rel="stylesheet">
     <link>
     <style>
-
+        .profile-element{
+            padding-left: 20px;
+        }
     </style>
 </head>
 
@@ -36,6 +38,13 @@
             <ul class="nav" id="side-menu">
                 <li class="nav-header">
                     <div class="dropdown profile-element">
+                        <span><img alt="image" class="img-circle" height="70" width="70"
+                                   src="${request.contextPath}/webapp/static/img/profile_small.jpg"/></span>
+                        <h3 class="" style="color: #ffffff">
+                            </i>管理系统
+                        </h3>
+                    </div>
+                    <div class="dropdown profile-element hidden">
                         <span><img alt="image" class="img-circle" src="webapp/static/img/profile_small.jpg"/></span>
                         <a data-toggle="dropdown" class="dropdown-toggle" href="#">
                         <span class="clear">

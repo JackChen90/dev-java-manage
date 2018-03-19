@@ -37,6 +37,7 @@
 		menu_type,
 		sort_order,
 		url,
+		icon,
 		rm.operation,
 		operation_all,
 		description

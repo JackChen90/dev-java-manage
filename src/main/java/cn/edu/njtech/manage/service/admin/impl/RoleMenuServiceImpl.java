@@ -1,16 +1,22 @@
 package cn.edu.njtech.manage.service.admin.impl;
 
+import cn.edu.njtech.manage.constant.RedisConstant;
 import cn.edu.njtech.manage.dao.MenuInfoMapper;
 import cn.edu.njtech.manage.dao.RoleMenuMapper;
+import cn.edu.njtech.manage.domain.RoleMenu;
 import cn.edu.njtech.manage.dto.GridDataDTO;
 import cn.edu.njtech.manage.dto.RoleMenuDTO;
+import cn.edu.njtech.manage.dto.request.RoleMenuRequest;
 import cn.edu.njtech.manage.service.admin.IRoleMenuService;
 import cn.edu.njtech.manage.util.GridSqlUtil;
+import cn.edu.njtech.manage.util.RedisUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -31,6 +37,9 @@ public class RoleMenuServiceImpl implements IRoleMenuService {
 	 * 根节点标识
 	 */
 	private static final Integer ROOT = -1;
+
+	@Autowired
+	private RedisUtil redisUtil;
 
 	@Autowired
 	private RoleMenuMapper roleMenuMapper;
@@ -116,6 +125,29 @@ public class RoleMenuServiceImpl implements IRoleMenuService {
 		result = convertMenus(result);
 		logger.info("=== queryEditRoleMenuList success ===, result size:{}", result == null ? null : result.size());
 		return result;
+	}
+
+	@Override
+	@Transactional(rollbackFor = Exception.class)
+	public Boolean saveRoleMenuData(RoleMenuRequest request) {
+		logger.info("=== saveRoleMenuData start ===," + "request: [" + request + "]");
+		//删除redis中的key
+		redisUtil.del(RedisConstant.KEY_ROLE_MENU);
+		//删除db中角色对应的所有权限
+		roleMenuMapper.deleteRoleMenu(request.getRoleId());
+		//security中获取当事人name
+		String userName = SecurityContextHolder
+				.getContext().getAuthentication().getName();
+		//入参request 转 entity列表
+		List<RoleMenu> roleMenus = request.convertToEntity(userName);
+		if (roleMenus == null) {
+			//相当于没有菜单，直接返回，无须插入
+			return true;
+		}
+		//保存角色-菜单数据
+		roleMenuMapper.batchSaveRoleMenu(roleMenus);
+		logger.info("=== saveRoleMenuData end ===");
+		return true;
 	}
 
 	/**

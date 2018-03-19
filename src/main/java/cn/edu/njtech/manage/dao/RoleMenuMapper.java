@@ -3,6 +3,7 @@ package cn.edu.njtech.manage.dao;
 import cn.edu.njtech.manage.domain.RoleMenu;
 import cn.edu.njtech.manage.dto.RoleMenuDTO;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -36,4 +37,18 @@ public interface RoleMenuMapper {
 	 * @return
 	 */
 	List<RoleMenuDTO> queryEditRoleMenu(Map<String, Object> condition);
+
+	/**
+	 * 删除对应的角色-菜单数据
+	 *
+	 * @param roleId 入参，角色id
+	 */
+	void deleteRoleMenu(@Param("roleId") Integer roleId);
+
+	/**
+	 * 保存角色-菜单数据
+	 *
+	 * @param roleMenus 角色-菜单列表
+	 */
+	void batchSaveRoleMenu(List<RoleMenu> roleMenus);
 }

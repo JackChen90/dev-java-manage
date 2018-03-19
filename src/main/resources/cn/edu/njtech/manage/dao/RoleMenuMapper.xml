@@ -2,29 +2,48 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.edu.njtech.manage.dao.RoleMenuMapper">
 	<resultMap id="roleMenuDTO" type="cn.edu.njtech.manage.dto.RoleMenuDTO">
-		<id column="id" jdbcType="INTEGER" property="id" />
+		<id column="id" jdbcType="INTEGER" property="id"/>
 		<result column="parent_id" jdbcType="INTEGER" property="parentId"/>
-		<result column="role_id" jdbcType="INTEGER" property="roleId" />
-		<result column="has_role" jdbcType="BOOLEAN" property="hasRole" />
-		<result column="menu_id" jdbcType="INTEGER" property="menuId" />
+		<result column="role_id" jdbcType="INTEGER" property="roleId"/>
+		<result column="has_role" jdbcType="BOOLEAN" property="hasRole"/>
+		<result column="menu_id" jdbcType="INTEGER" property="menuId"/>
 		<result column="menu_level" jdbcType="DECIMAL" property="menuLevel"/>
 		<result column="menu_name" jdbcType="VARCHAR" property="menuName"/>
 		<result column="menu_leaf" jdbcType="BOOLEAN" property="menuLeaf"/>
 		<result column="icon" jdbcType="VARCHAR" property="menuIcon"/>
 		<result column="sort_order" jdbcType="DECIMAL" property="sortOrder"/>
 		<result column="url" jdbcType="VARCHAR" property="url"/>
-		<result column="operation" jdbcType="INTEGER" property="operation" />
+		<result column="operation" jdbcType="INTEGER" property="operation"/>
 		<result column="operation_all" jdbcType="INTEGER" property="operationAll"/>
-		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
-		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
-		<result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+		<result column="create_user" jdbcType="VARCHAR" property="createUser"/>
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+		<result column="update_user" jdbcType="VARCHAR" property="updateUser"/>
 		<result column="expanded" jdbcType="BOOLEAN" property="expanded"/>
 	</resultMap>
 	<insert id="insert" parameterType="cn.edu.njtech.manage.domain.RoleMenu">
 	</insert>
 	<insert id="insertSelective" parameterType="cn.edu.njtech.manage.domain.RoleMenu">
 	</insert>
+
+	<insert id="batchSaveRoleMenu" parameterType="java.util.List">
+		INSERT INTO t_role_menu (role_id, menu_id, operation, create_time, create_user)
+		VALUES
+		<foreach collection="list" item="item" index="index" separator=",">
+			(#{item.roleId}, #{item.menuId}, #{item.operation},
+			#{item.createTime}, #{item.createUser})
+		</foreach>
+	</insert>
+
+	<!--删除对应的角色的所有菜单权限数据-->
+	<delete id="deleteRoleMenu" parameterType="java.lang.Integer">
+		DELETE FROM t_role_menu trm
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="roleId != null">
+				and trm.role_id = #{roleId}
+			</if>
+		</trim>
+	</delete>
 
 	<!--查询角色菜单数量-->
 	<select id="queryRoleMenuCount" resultType="java.lang.Integer">
@@ -130,7 +149,8 @@
 			<if test="roleId != null">
 				and role_id = #{roleId}
 			</if>
-		</trim>) AS trm
+		</trim>
+		) AS trm
 		LEFT JOIN t_role_info tri ON tri.id = trm.role_id
 		RIGHT JOIN t_menu_info tmi ON tmi.id = trm.menu_id
 		<trim prefix="WHERE" prefixOverrides="AND |OR ">

@@ -14,8 +14,6 @@ import java.util.Map;
 public interface UserRoleMapper {
 	int insert(UserRole record);
 
-	int insertSelective(UserRole record);
-
 	/**
 	 * 根据条件查询用户权限信息
 	 *
