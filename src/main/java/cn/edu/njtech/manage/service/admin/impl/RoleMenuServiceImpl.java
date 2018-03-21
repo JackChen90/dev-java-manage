@@ -38,6 +38,11 @@ public class RoleMenuServiceImpl implements IRoleMenuService {
 	 */
 	private static final Integer ROOT = -1;
 
+	/**
+	 * 管理员菜单标识
+	 */
+	private static final Integer ADMIN_MENU_TYPE = 1;
+
 	@Autowired
 	private RedisUtil redisUtil;
 
@@ -132,9 +137,14 @@ public class RoleMenuServiceImpl implements IRoleMenuService {
 	public Boolean saveRoleMenuData(RoleMenuRequest request) {
 		logger.info("=== saveRoleMenuData start ===," + "request: [" + request + "]");
 		//删除redis中的key
-		redisUtil.del(RedisConstant.KEY_ROLE_MENU);
+		if (ADMIN_MENU_TYPE.equals(request.getMenuType())) {
+			redisUtil.del(RedisConstant.ADMIN_KEY_ROLE_MENU);
+		}else {
+			redisUtil.del(RedisConstant.KEY_ROLE_MENU);
+
+		}
 		//删除db中角色对应的所有权限
-		roleMenuMapper.deleteRoleMenu(request.getRoleId());
+		roleMenuMapper.deleteRoleMenu(request.getRoleId(), request.getMenuType());
 		//security中获取当事人name
 		String userName = SecurityContextHolder
 				.getContext().getAuthentication().getName();

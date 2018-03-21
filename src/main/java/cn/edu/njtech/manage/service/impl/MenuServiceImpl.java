@@ -1,6 +1,7 @@
 package cn.edu.njtech.manage.service.impl;
 
 import cn.edu.njtech.manage.constant.RedisConstant;
+import cn.edu.njtech.manage.constant.SystemConstant;
 import cn.edu.njtech.manage.dao.MenuInfoMapper;
 import cn.edu.njtech.manage.domain.MenuInfo;
 import cn.edu.njtech.manage.dto.GridDataDTO;
@@ -66,13 +67,22 @@ public class MenuServiceImpl implements IMenuService {
 		for (Integer roleId :
 				roleIds) {
 			//redis中获取角色对应menu列表
-			String menusStr = redisUtil.hGet(RedisConstant.KEY_ROLE_MENU, roleId + "_" + type + RedisConstant.ROLE_SUFFIX);
+			String menusStr;
+			if (SystemConstant.ADMIN_MENU_TYPE.equals(type)) {
+				menusStr = redisUtil.hGet(RedisConstant.ADMIN_KEY_ROLE_MENU, roleId + "_" + RedisConstant.ROLE_SUFFIX);
+			} else {
+				menusStr = redisUtil.hGet(RedisConstant.KEY_ROLE_MENU, roleId + "_" + RedisConstant.ROLE_SUFFIX);
+			}
 			if (StringUtils.isEmpty(menusStr)) {
 				//redis中不存在，取db
 				items = menuInfoMapper.queryMenuByRoleId(roleId, type);
 				//入redis
 				String menuItem = new GsonUtil().getDateSafeGson().toJson(items, typeToken);
-				redisUtil.hSet(RedisConstant.KEY_ROLE_MENU, roleId + "_" + type + RedisConstant.ROLE_SUFFIX, menuItem);
+				if (SystemConstant.ADMIN_MENU_TYPE.equals(type)) {
+					redisUtil.hSet(RedisConstant.ADMIN_KEY_ROLE_MENU, roleId + "_" + RedisConstant.ROLE_SUFFIX, menuItem);
+				} else {
+					redisUtil.hSet(RedisConstant.KEY_ROLE_MENU, roleId + "_" + RedisConstant.ROLE_SUFFIX, menuItem);
+				}
 			} else {
 				//反序列化
 				items = new GsonUtil().getDateSafeGson().fromJson(menusStr, typeToken);

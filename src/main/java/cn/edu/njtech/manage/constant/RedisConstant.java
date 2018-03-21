@@ -12,6 +12,11 @@ public class RedisConstant {
 	public final static String KEY_ROLE_MENU = "KEY_ROLE_MENU";
 
 	/**
+	 * Admin角色菜单Key
+	 */
+	public final static String ADMIN_KEY_ROLE_MENU = "ADMIN_KEY_ROLE_MENU";
+
+	/**
 	 * 角色菜单操作Key
 	 */
 	public final static String KEY_ROLE_MENU_OPERATION = "KEY_ROLE_MENU_OPERATION";

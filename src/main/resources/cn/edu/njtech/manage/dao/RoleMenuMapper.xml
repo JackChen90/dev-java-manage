@@ -42,6 +42,13 @@
 			<if test="roleId != null">
 				and trm.role_id = #{roleId}
 			</if>
+			<if test="menuType !=null">
+				and trm.menu_id in
+				(
+					select id from t_menu_info
+					where menu_type = #{menuType}
+				)
+			</if>
 		</trim>
 	</delete>
 

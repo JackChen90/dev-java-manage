@@ -41,9 +41,11 @@ public interface RoleMenuMapper {
 	/**
 	 * 删除对应的角色-菜单数据
 	 *
-	 * @param roleId 入参，角色id
+	 * @param roleId   入参，角色id
+	 * @param menuType 入参，菜单类型
 	 */
-	void deleteRoleMenu(@Param("roleId") Integer roleId);
+	void deleteRoleMenu(@Param("roleId") Integer roleId,
+						@Param("menuType") Integer menuType);
 
 	/**
 	 * 保存角色-菜单数据
