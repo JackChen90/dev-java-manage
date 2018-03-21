@@ -24,6 +24,11 @@ public class RoleMenuRequest {
 	private Integer menuType;
 
 	/**
+	 * 菜单-按钮 权限集合 String
+	 */
+	private String dataStr;
+
+	/**
 	 * 菜单-按钮 权限集合
 	 */
 	private List<RoleMenuData> data;
@@ -113,6 +118,7 @@ public class RoleMenuRequest {
 		return "RoleMenuRequest{" +
 				"roleId=" + roleId +
 				", menuType=" + menuType +
+				", dataStr=" + dataStr +
 				", data=" + data +
 				'}';
 	}
@@ -131,6 +137,14 @@ public class RoleMenuRequest {
 
 	public void setMenuType(Integer menuType) {
 		this.menuType = menuType;
+	}
+
+	public String getDataStr() {
+		return dataStr;
+	}
+
+	public void setDataStr(String dataStr) {
+		this.dataStr = dataStr;
 	}
 
 	public List<RoleMenuData> getData() {

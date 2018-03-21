@@ -9,6 +9,8 @@ import cn.edu.njtech.manage.dto.RoleMenuDTO;
 import cn.edu.njtech.manage.dto.request.RoleMenuRequest;
 import cn.edu.njtech.manage.service.admin.IRoleMenuService;
 import cn.edu.njtech.manage.util.*;
+import com.google.gson.reflect.TypeToken;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -168,9 +172,9 @@ public class RoleMenuController {
 	 * @param request 入参
 	 * @return
 	 */
-	@RequestMapping(value = "batchSaveRoleMenu")
+	@RequestMapping(value = "saveRoleMenu")
 	@ResponseBody
-	public JsonResponse saveRoleMenu(RoleMenuRequest request) {
+	public JsonResponse batchSaveRoleMenu(RoleMenuRequest request) {
 		logger.info("=== batchSaveRoleMenu start ===," + "request: [" + request + "]");
 		JsonResponse jsonResponse = null;
 		HandleResult handleResult = judgeRequest(request);
@@ -205,6 +209,18 @@ public class RoleMenuController {
 		if (request.getRoleId() == null) {
 			result = new HandleResult(false, "request.roleId is empty");
 			return result;
+		}
+
+		//dataStr转data object
+		if (StringUtils.isNotEmpty(request.getDataStr())) {
+			Type type = new TypeToken<ArrayList<RoleMenuRequest.RoleMenuData>>() {
+			}.getType();
+			try {
+				request.setData(new GsonUtil().getDateSafeGson().fromJson(request.getDataStr(), type));
+			}catch (Exception e){
+				result = new HandleResult(false,"request.dataStr format error");
+				return result;
+			}
 		}
 
 		//data不为空时，判断id，hasRole字段不为空

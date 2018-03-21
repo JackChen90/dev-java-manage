@@ -76,12 +76,12 @@
         <div class="col-sm-3">
             <div class="jqGrid_wrapper jqGrid_btn_wrapper">
             <#--<table id="btn_list"></table>-->
-                <div class="checkbox checkbox-success">
-                    <input id="checkbox3" class="styled" type="checkbox">
-                    <label for="checkbox3">
-                        Success
-                    </label>
-                </div>
+                <#--<div class="checkbox checkbox-success">-->
+                    <#--<input id="checkbox3" class="styled" type="checkbox">-->
+                    <#--<label for="checkbox3">-->
+                        <#--Success-->
+                    <#--</label>-->
+                <#--</div>-->
             </div>
         </div>
     </div>

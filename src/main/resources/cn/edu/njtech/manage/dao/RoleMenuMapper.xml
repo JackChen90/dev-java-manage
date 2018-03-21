@@ -37,10 +37,17 @@
 
 	<!--删除对应的角色的所有菜单权限数据-->
 	<delete id="deleteRoleMenu" parameterType="java.lang.Integer">
-		DELETE FROM t_role_menu trm
+		DELETE FROM t_role_menu
 		<trim prefix="WHERE" prefixOverrides="AND |OR ">
 			<if test="roleId != null">
-				and trm.role_id = #{roleId}
+				and role_id = #{roleId}
+			</if>
+			<if test="menuType != null">
+				and menu_id in(
+				select id
+				from t_menu_info
+				where menu_type = #{menuType}
+				)
 			</if>
 			<if test="menuType !=null">
 				and trm.menu_id in

@@ -38,7 +38,8 @@ var roleMenuEdit = {
         // console.log(obj);
         var data = {};
         data.roleId = roleMenuEdit.roleId;
-        data.data = roleMenuEdit.roleMenuData;
+        data.menuType = 1;
+        data.dataStr = JSON.stringify(roleMenuEdit.roleMenuData);
         var path = roleMenuEdit.contextPath + roleMenuEdit.saveRoleMenuUrl;
         //todo 获取所有选中行，以及btn数据
         ajaxPostJson(path, false, data, roleMenuEdit.refreshGrid);
@@ -217,8 +218,8 @@ var roleMenuEdit = {
                         if (roleMenuEdit.roleMenuData[i].id == rowid) {
                             //设置页面权限
                             roleMenuEdit.roleMenuData[i].hasRole = $(e.target).prop('checked');
-                            console.log(rowid);
-                            console.log(roleMenuEdit.roleMenuData[i].hasRole);
+                            // console.log(rowid);
+                            // console.log(roleMenuEdit.roleMenuData[i].hasRole);
                         }
                     }
                 }
@@ -305,7 +306,7 @@ var roleMenuEdit = {
             var ids = id.split('_');
             var menuId = ids[0];
             var op = new Number(ids[1]);
-            alert($(this).prop('checked'));
+            // alert($(this).prop('checked'));
 
             for (var i = 0; i < roleMenuEdit.roleMenuData.length; i++) {
                 if (roleMenuEdit.roleMenuData[i].id == menuId) {
