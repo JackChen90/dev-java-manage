@@ -49,13 +49,6 @@
 				where menu_type = #{menuType}
 				)
 			</if>
-			<if test="menuType !=null">
-				and trm.menu_id in
-				(
-					select id from t_menu_info
-					where menu_type = #{menuType}
-				)
-			</if>
 		</trim>
 	</delete>
 

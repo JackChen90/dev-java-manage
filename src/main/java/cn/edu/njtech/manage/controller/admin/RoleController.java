@@ -26,7 +26,7 @@ import java.util.List;
  * @description RoleController
  */
 @Controller
-@RequestMapping(value = "role")
+@RequestMapping(value = "admin/role")
 public class RoleController {
 	private Logger logger = LoggerFactory.getLogger(getClass());
 

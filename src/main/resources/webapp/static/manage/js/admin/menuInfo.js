@@ -12,17 +12,17 @@ var menu = {
     //默认每页20条
     pageSize: 20,
     //操作权限数据url
-    operationUrl: "/menu/operationData",
+    operationUrl: "/admin/menu/operationData",
     //菜单信息数据url
-    queryUrl: "/menu/queryData",
+    queryUrl: "/admin/menu/queryData",
     //新增/编辑/删除数据url
-    editUrl: "/menu/operateMenuData",
+    editUrl: "/admin/menu/operateMenuData",
     //校验用户名不重复
-    checkMenuNameUrl: "/menu/checkMenuName",
+    checkMenuNameUrl: "/admin/menu/checkMenuName",
     //操作字典url
     operationMapUrl: "/operation/allOperation",
     //查询所有父节点信息
-    queryParentsUrl: "/menu/queryParents4Select",
+    queryParentsUrl: "/admin/menu/queryParents4Select",
     getAllOperation: function () {
         var operationJson = {};
         if (menu.allOperation) {

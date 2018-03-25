@@ -45,10 +45,10 @@ public class UserController {
 		binder.setFieldMarkerPrefix(null);
 	}
 
-	@RequestMapping(value = "/")
+	@RequestMapping(value = "/admin")
 	public ModelAndView home(HttpServletRequest request) {
 		request.getContentType();
-		ModelAndView result = new ModelAndView("home");
+		ModelAndView result = new ModelAndView("admin/home");
 		return result;
 	}
 
@@ -59,7 +59,7 @@ public class UserController {
 //		return result;
 //	}
 
-	@RequestMapping(value = "/user/manage")
+	@RequestMapping(value = "admin/user/manage")
 	public ModelAndView userManage(@RequestParam Integer menuId,
 								   @RequestParam Integer type) {
 		ModelAndView result = new ModelAndView("admin/userInfo");
@@ -68,7 +68,7 @@ public class UserController {
 		return result;
 	}
 
-	@RequestMapping(value = "user/operationData")
+	@RequestMapping(value = "admin/user/operationData")
 	@ResponseBody
 	public JsonResponse queryOperationData(@RequestParam Integer menuId,
 										   @RequestParam Integer type) {
@@ -84,7 +84,7 @@ public class UserController {
 	 * @param dto 入参
 	 * @return
 	 */
-	@RequestMapping(value = "user/queryData")
+	@RequestMapping(value = "admin/user/queryData")
 	@ResponseBody
 	public JqGrid<UserInfoDTO> queryUserInfoData(GridDataDTO dto) {
 		logger.info("=== queryUserInfoData start ===, dto:{}", dto);
@@ -116,7 +116,7 @@ public class UserController {
 	 * @param userName 入参用户名
 	 * @return
 	 */
-	@RequestMapping(value = "/user/checkUserName", method = RequestMethod.POST)
+	@RequestMapping(value = "admin//user/checkUserName", method = RequestMethod.POST)
 	@ResponseBody
 	public JsonResponse checkUserName(@RequestParam String userName) {
 		JsonResponse jsonResponse;
@@ -178,7 +178,7 @@ public class UserController {
 	 * @param dto 入参数据
 	 * @return
 	 */
-	@RequestMapping(value = "/user/operateUserData", method = RequestMethod.POST)
+	@RequestMapping(value = "admin/user/operateUserData", method = RequestMethod.POST)
 	@ResponseBody
 	public JsonResponse operateData(UserInfoDTO dto) {
 		logger.info("=== operateData start ===, dto:{}", dto);
@@ -197,7 +197,7 @@ public class UserController {
 	 *
 	 * @return
 	 */
-	@RequestMapping(value = "user/queryUser4Select")
+	@RequestMapping(value = "admin/user/queryUser4Select")
 	@ResponseBody
 	public JsonResponse queryUser4Select() {
 		logger.info("=== queryUser4Select start ===");

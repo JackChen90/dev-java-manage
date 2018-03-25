@@ -10,13 +10,13 @@ var role = {
     //默认每页20条
     pageSize: 20,
     //操作权限数据url
-    operationUrl: "/role/operationData",
+    operationUrl: "/admin/role/operationData",
     //用户信息数据url
-    queryUrl: "/role/queryData",
+    queryUrl: "/admin/role/queryData",
     //新增/编辑/删除数据url
-    editUrl: "/role/operateRoleData",
+    editUrl: "/admin/role/operateRoleData",
     //校验用户名不重复
-    checkRoleNameUrl: "/role/checkRoleName",
+    checkRoleNameUrl: "/admin/role/checkRoleName",
     convertDel: function (cellvalue, options, rowObject) {
         var newCellValue = null;
         switch (cellvalue) {

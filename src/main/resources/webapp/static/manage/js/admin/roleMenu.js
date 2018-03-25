@@ -8,19 +8,19 @@ var roleMenu = {
     //所有操作权限
     allOperation: null,
     //操作权限数据url
-    operationUrl: "/roleMenu/operationData",
+    operationUrl: "/admin/roleMenu/operationData",
     //角色信息数据url
-    queryRoleInfoUrl: "/role/queryData",
+    queryRoleInfoUrl: "/admin/role/queryData",
     //菜单信息数据url
-    queryRoleMenuUrl: "/roleMenu/queryMenuData",
+    queryRoleMenuUrl: "/admin/roleMenu/queryMenuData",
     //新增/编辑/删除数据url
-    editUrl: "/roleMenu/operateMenuData",
+    editUrl: "/admin/roleMenu/operateMenuData",
     //校验用户名不重复
-    checkMenuNameUrl: "/roleMenu/checkMenuName",
+    checkMenuNameUrl: "/admin/roleMenu/checkMenuName",
     //操作字典url
     operationMapUrl: "/operation/allOperation",
     //查询所有父节点信息
-    queryParentsUrl: "/roleMenu/queryParents4Select",
+    queryParentsUrl: "/admin/roleMenu/queryParents4Select",
     getAllOperation: function () {
         var operationJson = {};
         if (roleMenu.allOperation) {
@@ -281,8 +281,8 @@ var roleMenu = {
                 width: 180,
                 formoptions: {label: '菜单链接<font color=\'red\'> *</font>'}
             }, {
-                name: "operationAll",
-                index: "operation_all",
+                name: "operation",
+                index: "operation",
                 sortable: false,
                 editable: true,
                 edittype: "select",
@@ -462,7 +462,7 @@ var roleMenu = {
                             shadeClose: false,
                             skin: 'layer-ext-moon',
                             area: ['900px', '420px'],
-                            content: roleMenu.contextPath + '/roleMenu/roleMenuEdit?roleId=' + selRow
+                            content: roleMenu.contextPath + '/admin/roleMenu/roleMenuEdit?roleId=' + selRow
                         })
                     } else {
                         // $.jgrid.viewModal("#alertmod_role_list", {toTop: true, jqm: true});

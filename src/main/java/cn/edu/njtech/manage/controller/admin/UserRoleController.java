@@ -24,7 +24,7 @@ import java.util.List;
  * @description UserRoleController
  */
 @RestController
-@RequestMapping("userRole")
+@RequestMapping("admin/userRole")
 public class UserRoleController {
 
 	private Logger logger = LoggerFactory.getLogger(getClass());

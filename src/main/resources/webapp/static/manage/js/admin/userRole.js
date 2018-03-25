@@ -12,17 +12,17 @@ var userRole = {
     //默认每页20条
     pageSize: 20,
     //操作权限数据url
-    operationUrl: "/userRole/operationData",
+    operationUrl: "/admin/userRole/operationData",
     //用户角色信息数据url
-    queryUrl: "/userRole/queryData",
+    queryUrl: "/admin/userRole/queryData",
     //新增/编辑/删除数据url
-    editUrl: "/userRole/operateUserRoleData",
+    editUrl: "/admin/userRole/operateUserRoleData",
     //查询用户列表信息
-    queryUsersUrl: "/user/queryUser4Select",
+    queryUsersUrl: "/admin/user/queryUser4Select",
     //查询角色信息
-    queryRolesUrl: "/role/queryRole4Select",
+    queryRolesUrl: "/admin/role/queryRole4Select",
     //校验用户角色url
-    checkUserRoleUrl: "/userRole/checkUserRole",
+    checkUserRoleUrl: "/admin/userRole/checkUserRole",
     convertDel: function (cellvalue, options, rowObject) {
         var newCellValue = null;
         switch (cellvalue) {

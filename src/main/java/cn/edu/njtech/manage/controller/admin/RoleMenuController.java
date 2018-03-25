@@ -34,7 +34,7 @@ import java.util.List;
  * @description RoleMenuController
  */
 @Controller
-@RequestMapping(value = "roleMenu")
+@RequestMapping(value = "admin/roleMenu")
 public class RoleMenuController {
 	/**
 	 * logger

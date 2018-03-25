@@ -11,9 +11,9 @@ var roleMenuEdit = {
     //所有操作权限
     allOperation: null,
     //菜单信息数据url
-    queryRoleMenuUrl: "/roleMenu/queryMenuByRoleId",
+    queryRoleMenuUrl: "/admin/roleMenu/queryMenuByRoleId",
     //保存角色菜单url
-    saveRoleMenuUrl: "/roleMenu/saveRoleMenu",
+    saveRoleMenuUrl: "/admin/roleMenu/saveRoleMenu",
     //操作字典url
     operationMapUrl: "/operation/allOperation",
     // convertDel: function (cellvalue, options, rowObject) {
@@ -29,8 +29,11 @@ var roleMenuEdit = {
     //     }
     //     return newCellValue;
     // },
-    refreshGrid: function () {
-
+    refreshGrid: function (data) {
+        console.log(data);
+        var index = parent.layer.getFrameIndex(window.name);
+        parent.$("#role_list").jqGrid().trigger("reloadGrid");
+        parent.layer.close(index);
     },
     save: function () {//页面"保存"按钮点击事件
         // var obj = $("#edit_menu_list").jqGrid("getRowData");

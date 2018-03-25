@@ -10,13 +10,13 @@ var user = {
     //默认每页20条
     pageSize: 20,
     //操作权限数据url
-    operationUrl: "/user/operationData",
+    operationUrl: "/admin/user/operationData",
     //用户信息数据url
-    queryUrl: "/user/queryData",
+    queryUrl: "/admin//user/queryData",
     //新增/编辑/删除数据url
-    editUrl: "/user/operateUserData",
+    editUrl: "/admin//user/operateUserData",
     //校验用户名不重复
-    checkUserNameUrl: "/user/checkUserName",
+    checkUserNameUrl: "/admin//user/checkUserName",
     convertDel: function (cellvalue, options, rowObject) {
         var newCellValue = null;
         switch (cellvalue) {

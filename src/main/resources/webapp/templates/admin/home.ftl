@@ -39,7 +39,7 @@
                 <li class="nav-header">
                     <div class="dropdown profile-element">
                         <span><img alt="image" class="img-circle" height="70" width="70"
-                                   src="${request.contextPath}/webapp/static/img/profile_small.jpg"/></span>
+                                   src="../webapp/static/img/profile_small.jpg"/></span>
                         <h3 class="" style="color: #ffffff">
                             </i>管理系统
                         </h3>
@@ -140,7 +140,7 @@
 
 <script src="${request.contextPath}/webapp/static/js/jquery.min.js?v=2.1.4"></script>
 <script src="${request.contextPath}/webapp/static/manage/js/util/ajax.js"></script>
-<script src="${request.contextPath}/webapp/static/manage/js/menu.js"></script>
+<script src="${request.contextPath}/webapp/static/manage/js/admin/menu.js"></script>
 <script src="${request.contextPath}/webapp/static/js/bootstrap.min.js?v=3.3.6"></script>
 <script src="${request.contextPath}/webapp/static/js/plugins/metisMenu/jquery.metisMenu.js"></script>
 <script src="${request.contextPath}/webapp/static/js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
