@@ -69,9 +69,9 @@ public class MenuServiceImpl implements IMenuService {
 			//redis中获取角色对应menu列表
 			String menusStr;
 			if (SystemConstant.ADMIN_MENU_TYPE.equals(type)) {
-				menusStr = redisUtil.hGet(RedisConstant.ADMIN_KEY_ROLE_MENU, roleId + "_" + RedisConstant.ROLE_SUFFIX);
+				menusStr = redisUtil.hGet(RedisConstant.ADMIN_KEY_ROLE_MENU, roleId + RedisConstant.ROLE_SUFFIX);
 			} else {
-				menusStr = redisUtil.hGet(RedisConstant.KEY_ROLE_MENU, roleId + "_" + RedisConstant.ROLE_SUFFIX);
+				menusStr = redisUtil.hGet(RedisConstant.KEY_ROLE_MENU, roleId + RedisConstant.ROLE_SUFFIX);
 			}
 			if (StringUtils.isEmpty(menusStr)) {
 				//redis中不存在，取db
@@ -79,9 +79,9 @@ public class MenuServiceImpl implements IMenuService {
 				//入redis
 				String menuItem = new GsonUtil().getDateSafeGson().toJson(items, typeToken);
 				if (SystemConstant.ADMIN_MENU_TYPE.equals(type)) {
-					redisUtil.hSet(RedisConstant.ADMIN_KEY_ROLE_MENU, roleId + "_" + RedisConstant.ROLE_SUFFIX, menuItem);
+					redisUtil.hSet(RedisConstant.ADMIN_KEY_ROLE_MENU, roleId + RedisConstant.ROLE_SUFFIX, menuItem);
 				} else {
-					redisUtil.hSet(RedisConstant.KEY_ROLE_MENU, roleId + "_" + RedisConstant.ROLE_SUFFIX, menuItem);
+					redisUtil.hSet(RedisConstant.KEY_ROLE_MENU, roleId + RedisConstant.ROLE_SUFFIX, menuItem);
 				}
 			} else {
 				//反序列化

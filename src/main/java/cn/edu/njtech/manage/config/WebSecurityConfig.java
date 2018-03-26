@@ -94,6 +94,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 			private void handle(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
 				List<GrantedAuthority> authorities = (List<GrantedAuthority>) authentication.getAuthorities();
+				targetUrl = null;
 				if (authorities == null || authorities.isEmpty()) {
 					targetUrl = "/login";
 				}else {

@@ -43,7 +43,7 @@ function addChildren(children, level) {
         } else {
             result += "<li><a class=\"J_menuItem\" href=\"" + children[i].url
                 + "?menuId=" + children[i].id
-                + "&type=" + 1 + "\">" + children[i].menuName + "</a>";
+                + "&type=" + 0 + "\">" + children[i].menuName + "</a>";
         }
         result += "</li>";
     }

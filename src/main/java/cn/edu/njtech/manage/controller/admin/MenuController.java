@@ -25,7 +25,7 @@ import java.util.List;
  * @create 2018/1/14
  * @description MenuController
  */
-@RestController
+@RestController("adminMenuController")
 @RequestMapping("admin/menu")
 public class MenuController {
 	private Logger logger = LoggerFactory.getLogger(getClass());

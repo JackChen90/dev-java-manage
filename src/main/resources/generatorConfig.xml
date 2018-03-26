@@ -74,7 +74,7 @@
 		<!--&lt;!&ndash;<generatedKey column="ID" sqlStatement="MySql"/>&ndash;&gt;-->
 		<!--</table>-->
 
-		<table tableName="t_role_menu" domainObjectName="RoleMenuTest"
+		<table tableName="t_tank_info" domainObjectName="TankInfo"
 		enableInsert="true" enableSelectByExample="false" enableUpdateByExample="false"
 		enableDeleteByExample="false" enableCountByExample="false">
 		<property name="useActualColumnNames" value="false"/>
