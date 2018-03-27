@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.edu.njtech.manage.dao.TankInfoMapper">
+	<resultMap id="TankInfoDTO" type="cn.edu.njtech.manage.dto.TankInfoDTO">
+		<id column="id" jdbcType="INTEGER" property="id"/>
+		<result column="name" jdbcType="VARCHAR" property="name"/>
+		<result column="number" jdbcType="VARCHAR" property="number"/>
+		<result column="product_date" jdbcType="TIMESTAMP" property="productDate"/>
+		<result column="last_check_date" jdbcType="TIMESTAMP" property="lastCheckDate"/>
+		<result column="next_check_date" jdbcType="TIMESTAMP" property="nextCheckDate"/>
+		<result column="state" jdbcType="CHAR" property="state"/>
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+		<result column="create_user" jdbcType="VARCHAR" property="createUser"/>
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+		<result column="update_user" jdbcType="VARCHAR" property="updateUser"/>
+	</resultMap>
+	<sql id="Base_Column_List">
+    id, name, number, product_date, last_check_date, next_check_date, state, create_time, 
+    create_user, update_time, update_user
+  </sql>
+
+	<!--根据id删除储罐信息-->
+	<delete id="deleteById" parameterType="java.lang.Integer">
+    delete from t_tank_info
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+	<!--获取储罐信息列表-->
+	<select id="queryTankInfo" resultMap="TankInfoDTO">
+		SELECT
+		<include refid="Base_Column_List"/>
+		FROM t_tank_info
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="searchStr != null">
+				and ${searchStr}
+			</if>
+		</trim>
+		<choose>
+			<when test="orderStr != null">
+				${orderStr}
+			</when>
+			<otherwise>
+				ORDER BY id
+			</otherwise>
+		</choose>
+	</select>
+
+	<!--获取储罐数据量-->
+	<select id="queryTankInfoCount" resultType="java.lang.Integer">
+		SELECT
+		count(*)
+		FROM t_tank_info
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="searchStr != null">
+				and ${searchStr}
+			</if>
+		</trim>
+	</select>
+
+	<!--根据储罐编码获取储罐数量-->
+	<select id="countTankNumber" resultType="java.lang.Integer">
+		SELECT
+		COUNT(*)
+		FROM t_tank_info
+		WHERE number = #{tankNumber}
+	</select>
+
+	<!--新增储罐信息-->
+	<insert id="insertTankInfo" parameterType="cn.edu.njtech.manage.domain.TankInfo">
+		insert into t_tank_info
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="name != null">
+				name,
+			</if>
+			<if test="number != null">
+				number,
+			</if>
+			<if test="productDate != null">
+				product_date,
+			</if>
+			<if test="lastCheckDate != null">
+				last_check_date,
+			</if>
+			<if test="nextCheckDate != null">
+				next_check_date,
+			</if>
+			<if test="state != null">
+				state,
+			</if>
+			<if test="createTime != null">
+				create_time,
+			</if>
+			<if test="createUser != null">
+				create_user,
+			</if>
+			<if test="updateTime != null">
+				update_time,
+			</if>
+			<if test="updateUser != null">
+				update_user,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="name != null">
+				#{name,jdbcType=VARCHAR},
+			</if>
+			<if test="number != null">
+				#{number,jdbcType=VARCHAR},
+			</if>
+			<if test="productDate != null">
+				#{productDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="lastCheckDate != null">
+				#{lastCheckDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="nextCheckDate != null">
+				#{nextCheckDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="state != null">
+				#{state,jdbcType=CHAR},
+			</if>
+			<if test="createTime != null">
+				#{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				#{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateTime != null">
+				#{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateUser != null">
+				#{updateUser,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+
+	<!--更新储罐信息-->
+	<update id="updateTankInfo" parameterType="cn.edu.njtech.manage.domain.TankInfo">
+		update t_tank_info
+		<set>
+			<if test="name != null">
+				name = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="number != null">
+				number = #{number,jdbcType=VARCHAR},
+			</if>
+			<if test="productDate != null">
+				product_date = #{productDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="lastCheckDate != null">
+				last_check_date = #{lastCheckDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="nextCheckDate != null">
+				next_check_date = #{nextCheckDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="state != null">
+				state = #{state,jdbcType=CHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				create_user = #{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateUser != null">
+				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+</mapper>
