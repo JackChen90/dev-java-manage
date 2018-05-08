@@ -175,7 +175,7 @@
 	</profiles>
 
 	<build>
-		<finalName>service-clearaccount-0.0.1-SNAPSHOT</finalName>
+		<finalName>dev-java-manage-1.0</finalName>
 		<resources>
 			<resource>
 				<!--对配置文件下的目录做特殊处理 -->
