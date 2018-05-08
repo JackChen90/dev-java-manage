@@ -21,7 +21,8 @@
             height: 100%;
         }
 
-        .row {
+        /*不能设置.row的高度，影响载入框样式*/
+        .wrap {
             height: 100%;
         }
 
@@ -56,7 +57,7 @@
             <#--</div>-->
         <#--</div>-->
     <#--</div>-->
-    <div class="row">
+    <div class="row wrap">
         <div class="col-sm-3">
             <div class="jqGrid_wrapper jqGrid_role_wrapper">
                 <table id="role_list"></table>
