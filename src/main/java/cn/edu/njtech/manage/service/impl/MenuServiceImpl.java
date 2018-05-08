@@ -37,6 +37,16 @@ public class MenuServiceImpl implements IMenuService {
 	 */
 	private static final Integer ROOT = -1;
 
+	/**
+	 * 数据库中，后台页面menu_type为1
+	 */
+	private static final String ADMIN_MENU_TYPE = "1";
+
+	/**
+	 * 数据库中，前台页面menu_type为0
+	 */
+	private static final String COMMON_MENU_TYPE = "0";
+
 	@Autowired
 	private RedisUtil redisUtil;
 
@@ -189,8 +199,10 @@ public class MenuServiceImpl implements IMenuService {
 	 */
 	private void deleteMenuInfo(MenuInfoDTO dto) {
 		logger.info("=== deleteMenuInfo start ===");
-		//删除用户角色信息
+		//删除菜单信息
 		int count = menuInfoMapper.deleteById(Integer.valueOf(dto.getId()));
+		//清缓存，防止显示不一致问题
+		delCache(dto.getMenuType());
 		logger.info("=== deleteMenuInfo success ===, rows count:{}", count);
 	}
 
@@ -207,9 +219,36 @@ public class MenuServiceImpl implements IMenuService {
 				.getContext().getAuthentication().getName();
 		menuInfo.setUpdateUser(userName);
 		menuInfo.setUpdateTime(new Date());
-		//更新用户信息
+		//更新菜单信息
 		int count = menuInfoMapper.updateMenuInfo(menuInfo);
+		//redis中要删除KEY_ROLE_MENU、ADMIN_KEY_ROLE_MENU，防止icon变化、名称变化引起左侧菜单不一致
+		delCache(dto.getMenuType());
 		logger.info("=== editMenuInfo success ===, rows count:{}", count);
+	}
+
+	/**
+	 * 根据menu_type删除redis中对应的menu信息，防止icon、名称变化，或menu增删引起的显示不一致问题
+	 *
+	 * @param menuType 菜单类型 0前台页面；1后台页面
+	 */
+	private void delCache(String menuType) {
+		if (StringUtils.isEmpty(menuType)) {
+			redisUtil.del(RedisConstant.ADMIN_KEY_ROLE_MENU);
+			redisUtil.del(RedisConstant.KEY_ROLE_MENU);
+			return;
+		}
+		switch (menuType) {
+			case ADMIN_MENU_TYPE:
+				redisUtil.del(RedisConstant.ADMIN_KEY_ROLE_MENU);
+				break;
+			case COMMON_MENU_TYPE:
+				redisUtil.del(RedisConstant.KEY_ROLE_MENU);
+				break;
+			default:
+				redisUtil.del(RedisConstant.ADMIN_KEY_ROLE_MENU);
+				redisUtil.del(RedisConstant.KEY_ROLE_MENU);
+				break;
+		}
 	}
 
 	/**

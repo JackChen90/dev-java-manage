@@ -141,7 +141,6 @@ public class RoleMenuServiceImpl implements IRoleMenuService {
 			redisUtil.del(RedisConstant.ADMIN_KEY_ROLE_MENU);
 		}else {
 			redisUtil.del(RedisConstant.KEY_ROLE_MENU);
-
 		}
 		//删除db中角色对应的所有权限
 		roleMenuMapper.deleteRoleMenu(request.getRoleId(), request.getMenuType());
