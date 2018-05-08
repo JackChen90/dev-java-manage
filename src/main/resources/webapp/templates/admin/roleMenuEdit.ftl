@@ -22,7 +22,7 @@
             height: 100%;
         }
 
-        .row {
+        .row2 {
             height: 100%;
         }
 
