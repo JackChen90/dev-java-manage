@@ -1,9 +1,8 @@
 build:
   version: ${build.version}
-
 server:
-    port: 8080
-    context-path: /manage
+  port: 10001
+  context-path: /manage
 
 #logging:
 #  level:
